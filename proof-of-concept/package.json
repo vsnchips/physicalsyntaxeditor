@@ -1,0 +1,14 @@
+{
+  "name": "sel-proof",
+  "version": "0.0.1",
+  "description": "proof of concept for situated event lang ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dan Aston",
+  "license": "ISC",
+  "dependencies": {
+    "live-server": "^1.2.1"
+  }
+}

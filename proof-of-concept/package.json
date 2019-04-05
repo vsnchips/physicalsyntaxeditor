@@ -2,13 +2,17 @@
   "name": "sel-proof",
   "version": "0.0.1",
   "description": "proof of concept for situated event lang ",
-  "main": "index.js",
+  "main": editor.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dan Aston",
   "license": "ISC",
   "dependencies": {
-    "live-server": "^1.2.1"
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "live-server": "^1.2.1",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0"
   }
 }

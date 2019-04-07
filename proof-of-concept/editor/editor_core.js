@@ -2,15 +2,18 @@ clog = console.log;
 
 var hardcode;
 
+
+//WebSocket Definition
 var socket = new WebSocket('ws://localhost:8081/');
 socket.onopen = function(event) {
+
+  //Init
   console.log('Opened connection 🎉');
   //var json = JSON.stringify({ message: 'Hello' });
   var json = ({ message: 'Hello' });
   socket.send(json);
   console.log('Sent: ' + json);
   
-//Init
   socket.send('givemethehardcode');
 }
 
@@ -33,32 +36,27 @@ socket.onmessage = function (event) {
 socket.onclose = function(event) {
   console.log('Closed connection 😱');
 }
+//End Socket Definition
 
-/*document.querySelector('#close').addEventListener('click', function(event) {
-  socket.close();
-  console.log('Closed connection 😱');
-});
+var ast;
 
-document.querySelector('#send').addEventListener('click', function(event) {
-  var json = JSON.stringify({ message: 'Hey there' });
-  socket.send(json);
-  console.log('Sent: ' + json);
-});
-
-var log = function(text) {
-  var li = document.createElement('li');
-  li.innerHTML = text;
-  document.getElementById('log').appendChild(li);
+//Babel =
+function transform(){
+  ast = Babel.transform(hardcode,{
+    plugins: [hotcode]
+  })
 }
-*/
 
-var clog=console.log;
-
+//HTML object binding
 document.getElementById('load').addEventListener('click', function(event) {
   console.log('click');
   socket.send('givemethehardcode');
 
 });
 
+document.getElementById('event_transform').addEventListener('click', function(event) {
+  console.log('click');
+  transform();
+});
 
 

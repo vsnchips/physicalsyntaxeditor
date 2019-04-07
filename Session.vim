@@ -17,10 +17,7 @@ wincmd _ | wincmd |
 vsplit
 wincmd _ | wincmd |
 vsplit
-wincmd _ | wincmd |
-vsplit
-3wincmd h
-wincmd w
+2wincmd h
 wincmd w
 wincmd w
 wincmd _ | wincmd |
@@ -34,25 +31,12 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 30 + 141) / 282)
-exe 'vert 2resize ' . ((&columns * 83 + 141) / 282)
-exe 'vert 3resize ' . ((&columns * 83 + 141) / 282)
+exe 'vert 1resize ' . ((&columns * 70 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 24 + 73) / 147)
+exe '3resize ' . ((&lines * 38 + 40) / 80)
+exe 'vert 3resize ' . ((&columns * 51 + 73) / 147)
 exe '4resize ' . ((&lines * 38 + 40) / 80)
-exe 'vert 4resize ' . ((&columns * 83 + 141) / 282)
-exe '5resize ' . ((&lines * 38 + 40) / 80)
-exe 'vert 5resize ' . ((&columns * 83 + 141) / 282)
-argglobal
-enew
-file ~/local/412
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal nofen
-wincmd w
+exe 'vert 4resize ' . ((&columns * 51 + 73) / 147)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -63,12 +47,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal nofen
 silent! normal! zE
-let s:l = 42 - ((41 * winheight(0) + 38) / 77)
+let s:l = 91 - ((2 * winheight(0) + 38) / 77)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-42
-normal! 040|
+91
+normal! 02|
 wincmd w
 argglobal
 if bufexists("proof-of-concept/editor/editor_core.js") | buffer proof-of-concept/editor/editor_core.js | else | edit proof-of-concept/editor/editor_core.js | endif
@@ -81,12 +65,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal nofen
 silent! normal! zE
-let s:l = 4 - ((3 * winheight(0) + 38) / 77)
+let s:l = 44 - ((41 * winheight(0) + 38) / 77)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-4
-normal! 06|
+44
+normal! 09|
 wincmd w
 argglobal
 terminal ++curwin ++cols=83 ++rows=38 
@@ -98,12 +82,12 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=20
 setlocal nofen
-let s:l = 57 - ((25 * winheight(0) + 19) / 38)
+let s:l = 2 - ((1 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-57
-normal! 035|
+2
+normal! 0
 wincmd w
 argglobal
 if bufexists("proof-of-concept/editor/index.html") | buffer proof-of-concept/editor/index.html | else | edit proof-of-concept/editor/index.html | endif
@@ -116,26 +100,31 @@ setlocal fml=1
 setlocal fdn=20
 setlocal nofen
 silent! normal! zE
-let s:l = 6 - ((5 * winheight(0) + 19) / 38)
+let s:l = 16 - ((15 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-6
+16
 normal! 0
 wincmd w
-exe 'vert 1resize ' . ((&columns * 30 + 141) / 282)
-exe 'vert 2resize ' . ((&columns * 83 + 141) / 282)
-exe 'vert 3resize ' . ((&columns * 83 + 141) / 282)
+3wincmd w
+exe 'vert 1resize ' . ((&columns * 70 + 73) / 147)
+exe 'vert 2resize ' . ((&columns * 24 + 73) / 147)
+exe '3resize ' . ((&lines * 38 + 40) / 80)
+exe 'vert 3resize ' . ((&columns * 51 + 73) / 147)
 exe '4resize ' . ((&lines * 38 + 40) / 80)
-exe 'vert 4resize ' . ((&columns * 83 + 141) / 282)
-exe '5resize ' . ((&lines * 38 + 40) / 80)
-exe 'vert 5resize ' . ((&columns * 83 + 141) / 282)
+exe 'vert 4resize ' . ((&columns * 51 + 73) / 147)
 tabnext 1
-badd +1 index.html
-badd +5 proof-of-concept/editor/index.html
-badd +3 proof-of-concept/editor/editor_core.js
 badd +1 proof-of-concept/editor.js
-badd +4 proof-of-concept/package.json
+badd +1 ~/local/412
+badd +49 proof-of-concept/editor/editor_core.js
+badd +4 proof-of-concept/editor/index.html
+badd +1 index.html
+badd +16 proof-of-concept/package.json
+badd +1 proof-of-concept
+badd +40 websocket-demo/public/client.js
+badd +32 websocket-demo/server.js
+badd +3 websocket-demo/public/index.html
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf
 endif

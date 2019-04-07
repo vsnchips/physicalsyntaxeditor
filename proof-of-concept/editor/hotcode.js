@@ -6,17 +6,24 @@ function addHotLit(lit){
   lits.push(lit);
 }
 
+//change the literal to some other type.
+
 var hotcode = function(babel){
   var t = babel.types;
   return {
     visitor:{
-      NumericLiteral: function(path){
+      Literal: function(path,state){
+        
+        path.skip();
         var thevalue = path.node.value;
-        path.replaceWith(
-          t.callExpression(t.identifier("getHotLit"),[t.stringLiteral("litlength")])
-        );
+        path.replaceWithSourceString(`getHotLit(`+lits.length+`)`);
         addHotLit(thevalue);
-      }
+      }//,
+
+      /*CallExpression: function(path,state){
+        if (path.callee == `getHotLit`) path.stop();
+      }*/
     }
   };
-};
+}
+/* }; */

@@ -49,14 +49,17 @@ function transform(){
 
 //HTML object binding
 document.getElementById('load').addEventListener('click', function(event) {
-  console.log('click');
   socket.send('givemethehardcode');
 
 });
 
 document.getElementById('event_transform').addEventListener('click', function(event) {
-  console.log('click');
   transform();
+});
+
+document.getElementById('event_write_hot').addEventListener('click', function(event) {
+  socket.send(JSON.stringify(ast));
+  
 });
 
 

@@ -6,16 +6,13 @@ process.argv.forEach(function (arg){
 });
 
 console.log (`Argv Length:` + process.argv.length);
-if (process.argv.length > 2){
+if (process.argv.length > 3){
 
   var fs=require("fs");
   var hardcode;
   fs.readFile(process.argv[2],'utf8',function(error,contents){
     hardcode=JSON.stringify({kind:'hardcode','content':(contents), fl: 0.00005});
   });
-
-
-
 
 
   //Start ohe editor webserver
@@ -75,11 +72,22 @@ softtargetserver.start(params);
         console.log('Sent: ' + json);
       });
       */
+
       if(message == 'givemethehardcode'){
         socket.send(hardcode);
       }
+      try{
+        //     if(IsValidJSONString(message)){
+        var ast = JSON.parse(message);
+        if(ast.code)
+        {
+          console.log(`GOT CODE:`+ast.code);
+          fs.writeFileSync(process.argv[3],ast.code);
+        }
 
-
+      }catch(e){
+        console.log(e);
+      }
       socket.on('close', function() {
         console.log('Closed Connection 😱');
       });
@@ -91,4 +99,5 @@ softtargetserver.start(params);
   //endif
 }
 else{
-  console.log("need a filename arg!")}
+  console.log("need filenames args! use:\n node editor.js <coolfile> <hotfile>");
+}

@@ -98,7 +98,9 @@ if (pargs.length > 3){
 
     socket.on('message', function(message) {
 
-      hotclient.send("blip");
+      //hotclient.send("blip");
+        try{hotclient.send("blip");}
+        catch(e){console.error(e);}
 
       if(message == 'givemethehardcode'){
         socket.send(hardcode);

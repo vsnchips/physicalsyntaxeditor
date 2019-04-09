@@ -2,11 +2,34 @@ clog = console.log;
 
 var hardcode;
 
-
 //WebSocket Definition
 var socket = new WebSocket('ws://localhost:8081/');
-socket.onopen = function(event) {
 
+function updateHotLits(){
+  litmsg =JSON.stringify({kind:'hot_updates',lits:lits});
+  socket.send(litmsg);
+  clog("Posting lits");
+  clog(litmsg);
+
+}
+
+function hotLitsLoop(){
+  updateHotLits();
+  setTimeout( () => {
+ // window.requestAnimationFrame(hotLitsLoop);
+  },
+  1000.0/3.0);
+}
+
+ function write(){
+  clog("Sending hotcode");
+  pkt = JSON.stringify({kind:"AST", tree:ast});
+  socket.send(pkt);
+  clog(pkt);
+ }
+ 
+socket.onopen = function(event) {
+var pkt;
   //Init
   console.log('Opened connection 🎉');
   //var json = JSON.stringify({ message: 'Hello' });
@@ -15,6 +38,10 @@ socket.onopen = function(event) {
   console.log('Sent: ' + json);
   
   socket.send('givemethehardcode');
+  clog("request hardcode");
+
+  hotLitsLoop();
+
 }
 
 socket.onerror = function(event) {
@@ -26,11 +53,10 @@ socket.onmessage = function (event) {
     json = JSON.parse(event.data);
   if (json.kind == 'hardcode'){
     hardcode = json.content;
-  }
-    clog('HARD CODE:' + hardcode);
-    clog('EVENT DATA:' + event.data);
-    clog('EVENT DATA CONTENT:' + event.data["content"]);
     clog('EVENT DATA CONTENT:' + JSON.parse(event.data).content);
+    transform();
+    write();
+  }
 }
 
 socket.onclose = function(event) {
@@ -42,6 +68,7 @@ var ast;
 
 //Babel =
 function transform(){
+  clog("transforming hardcode");
   ast = Babel.transform(hardcode,{
     plugins: [hotcode]
   })
@@ -57,9 +84,9 @@ document.getElementById('event_transform').addEventListener('click', function(ev
   transform();
 });
 
+
 document.getElementById('event_write_hot').addEventListener('click', function(event) {
-  socket.send(JSON.stringify(ast));
-  
+ write(); 
 });
 
 

@@ -1,15 +1,20 @@
-function setup() {
-  var main_canvas = createCanvas(getHotLit(0), getHotLit(1));
-  main_canvas.parent(getHotLit(2)); //colorMode(HSL, 100);  // Use HSB with scale of 0-100
+function setup(){
 
-  colorMode(HSB); // Use HSB with scale of 0-100
+  var main_canvas = createCanvas(400, 320);
+  main_canvas.parent('canvasContainer');
+      
+  //colorMode(HSL, 100);  // Use HSB with scale of 0-100
+  colorMode(HSB);  // Use HSB with scale of 0-100
+  
+  background(0);
 
-  background(getHotLit(3));
 }
 
-function draw() {
+function draw(){
   //clear(0);
-  background(getHotLit(4));
-  fill(getHotLit(5), getHotLit(6), getHotLit(7));
-  quad(getHotLit(8), getHotLit(9), getHotLit(10), getHotLit(11), getHotLit(12), getHotLit(13), getHotLit(14), getHotLit(15));
+  background(0);
+  fill(300,200,50);
+  quad(50,50,150,50,180,180,80,180);
 }
+
+

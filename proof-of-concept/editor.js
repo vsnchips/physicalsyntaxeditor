@@ -119,7 +119,8 @@ if (pargs.length > 3){
 
       else if (jsnmsg.kind=="hot_updates"){
         clog("FORWARDING HOT UPDATES");
-        hotclient.send(message);
+        try{hotclient.send(message);}
+        catch(e){console.error(e);}
       }
 
 

@@ -21,13 +21,45 @@ function hotLitsLoop(){
   1000.0/3.0);
 }
 
- function write(){
-  clog("Sending hotcode");
-  pkt = JSON.stringify({kind:"AST", tree:ast});
+
+var hotast;
+var coolast;
+
+//These functions create Abstract syntax trees.
+  //Next Step!! TODO: Replace these with interactive ast manipulation.
+
+function transform_hot(){
+  clog("transforming hardcode");
+  hotast = Babel.transform(hardcode,{
+    plugins: [hotcode]
+  })
+}
+
+function transform_cool(){
+
+  clog("transforming hardcode");
+  coolast = Babel.transform(hardcode,{
+    plugins: []
+  })
+}
+
+
+function write(){
+  clog("Sending hot code");
+  pkt = JSON.stringify({kind:"AST", tree:hotast});
   socket.send(pkt);
   clog(pkt);
  }
- 
+
+function render(){
+  clog("Sending cool code");
+  pkt = JSON.stringify({kind:"ASTcool", tree:coolast});
+  socket.send(pkt);
+  clog(pkt);
+ }
+
+//Socket Definition
+
 socket.onopen = function(event) {
 var pkt;
   //Init
@@ -54,7 +86,7 @@ socket.onmessage = function (event) {
   if (json.kind == 'hardcode'){
     hardcode = json.content;
     clog('EVENT DATA CONTENT:' + JSON.parse(event.data).content);
-    transform();
+    transform_hot();
     write();
   }
 }
@@ -64,15 +96,6 @@ socket.onclose = function(event) {
 }
 //End Socket Definition
 
-var ast;
-
-//Babel =
-function transform(){
-  clog("transforming hardcode");
-  ast = Babel.transform(hardcode,{
-    plugins: [hotcode]
-  })
-}
 
 //HTML object binding
 document.getElementById('load').addEventListener('click', function(event) {
@@ -80,13 +103,22 @@ document.getElementById('load').addEventListener('click', function(event) {
 
 });
 
-document.getElementById('event_transform').addEventListener('click', function(event) {
-  transform();
+document.getElementById('event_transform_hot').addEventListener('click', function(event) {
+  transform_hot();
+});
+
+document.getElementById('event_transform_cool').addEventListener('click', function(event) {
+  transform_hot();
 });
 
 
 document.getElementById('event_write_hot').addEventListener('click', function(event) {
  write(); 
+});
+
+
+document.getElementById('event_write_cool').addEventListener('click', function(event) {
+ render(); 
 });
 
 

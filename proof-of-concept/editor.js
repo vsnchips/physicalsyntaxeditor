@@ -13,7 +13,8 @@ if (pargs.length > 3){
   fs.readFile(pargs[2]+pargs[3],'utf8',function(error,contents){
     hardcode=JSON.stringify({kind:'hardcode','content':(contents), fl: 0.00005});
   });
-  //Start ohe editor webserver
+  
+  //Start the editor webserver
 
   var editserver = require("live-server");
 
@@ -33,7 +34,7 @@ if (pargs.length > 3){
 
 
   //HotCode Server
-  var hothome = pargs.length> 4 ? pargs[4]:"index.html"; // When set, serve this file (server root relative) for every 404 (useful for single-page applications)
+  var hothome = pargs.length> 4 ? pargs[4]:"index.html";
 
   //Copy the project to the hotdir
   var fsx=require("fs-extra");
@@ -59,26 +60,22 @@ if (pargs.length > 3){
         );
       }  
     });
-
-
   });
 
+  /*
   //Start the soft target liveserver
   var softtargetserver = require("live-server");
   var tparams = {
     port: 8080,
     host: "0.0.0.0",
-    root: "./hotfolder/", // Set root directory that's being served. Defaults to cwd.
-    open: true, // When false, it won't load your browser by default.
-    //	ignore: 'scss,my/templates', // comma-separated string for paths to ignore
+    root: "./hotfolder/",
+    open: true,
     file: hothome,
-    // When set, serve this file (server root relative) for every 404 (useful for single-page applications)
-    //	wait: 1000, // Waits for all changes, before reloading. Defaults to 0 sec.
-    //	mount: [['/components', './node_modules']], // Mount a directory to a route.
-    logLevel: 2, // 0 = errors only, 1 = some, 2 = lots
+    logLevel: 2,
     middleware: [function(req, res, next) { next(); }] // Takes an array of Connect-compatible middleware that are injected into the server middleware stack
   };
   softtargetserver.start(tparams);
+*/
 
   //WebSockets
   var WSS= require('ws').Server;
@@ -98,10 +95,6 @@ if (pargs.length > 3){
 
     socket.on('message', function(message) {
 
-      //hotclient.send("blip");
-        try{hotclient.send("blip");}
-        catch(e){console.error(e);}
-
       if(message == 'givemethehardcode'){
         socket.send(hardcode);
       }
@@ -109,33 +102,40 @@ if (pargs.length > 3){
       //JSON cases 
       else{
         try{
-        //var jsnmsg = JSON.parse(message.data);
-        var jsnmsg = JSON.parse(message);
- 
-      if(jsnmsg.message=="hello_hot"){
-        clog("HOTCODE SOCKET PINGED-SUBSCRIBING!");
-        clog(jsnmsg);
-        hotclient=socket;
+          var jsnmsg = JSON.parse(message);
 
-      }
+          if(jsnmsg.message=="hello_hot"){
+            clog("HOTCODE SOCKET PINGED-SUBSCRIBING!");
+            clog(jsnmsg);
+            hotclient=socket;
+          }
 
-      else if (jsnmsg.kind=="hot_updates"){
-        clog("FORWARDING HOT UPDATES");
-        try{hotclient.send(message);}
-        catch(e){console.error(e);}
-      }
+          else if (jsnmsg.kind=="hot_updates"){
+            clog("FORWARDING HOT UPDATES");
+            try{hotclient.send(message);}
+            catch(e){console.error(e);}
+          }
 
+          else if(jsnmsg.kind=="AST")
+          {
+            console.log(`GOT CODE:`+jsnmsg.tree.code);
+            fs.writeFileSync("./hotfolder/"+process.argv[3],jsnmsg.tree.code);
+          }
 
-        else if(jsnmsg.kind=="AST")
-        {
-          console.log(`GOT CODE:`+jsnmsg.tree.code);
-          fs.writeFileSync("./hotfolder/"+process.argv[3],jsnmsg.tree.code);
-        }else{clog("UNKNOWN JSON MSG");}
-      }catch(e){
-        console.log(e);
-       clog("UKNOWN SOCKET MESSAGE");
-        
-      }
+          else if(jsnmsg.kind=="ASTcool")
+          {
+            console.log(`GOT CODE:`+jsnmsg.tree.code);
+            fs.writeFileSync(process.argv[2]+process.argv[3],jsnmsg.tree.code);
+          }
+          
+          else{
+           clog("UNKNOWN JSON MSG");
+          }
+
+        }catch(e){
+          console.log(e);
+          clog("UKNOWN SOCKET MESSAGE");
+        }
       }
     });//end messaage cases
 
@@ -143,8 +143,7 @@ if (pargs.length > 3){
       console.log('Closed Connection 😱');
     });
 
-});
-
+  });
 
   //endif
 }

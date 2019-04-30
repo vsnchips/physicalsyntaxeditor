@@ -1,0 +1,43 @@
+<head>
+<script src="https://unpkg.com/@babel/standalone/babel.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.js"></script>
+
+<style>
+body   { padding: 0; margin: 0; }
+.inner { position: relative; }
+#controls {
+  font: 300 12px "Helvetica Neue";
+  padding: 5;
+  margin: 5;
+  background: #f0f0f0;
+  opacity: 0.3;
+  -webkit-transition: opacity 0.2s ease;
+  -moz-transition: opacity 0.2s ease;
+  -o-transition: opacity 0.2s ease;
+  -ms-transition: opacity 0.2s ease;
+}
+#controls:hover { opacity: 0.9; }
+
+</style>
+</head>
+
+<body style="background-color: black">
+  <div>Hello Editor</div>
+</body>
+<div class="outer">
+  <div class="inner">
+    <div id="canvasContainer"></div>
+  </div>
+  <div id="controls">
+  <button id='load'>load hard code</button>
+  <button id='event_transform_hot'>transform hard code</button>
+  <button id='event_transform_cool'>transform hard code</button>
+  <button id='event_write_hot'>write hot code</button>
+  <button id='event_write_cool'>write cool code</button>
+  </div>
+</div>
+
+<script src="hotcode.js"></script>
+<script src="editor_core.js"></script>
+<script src="sketch.js"></script>

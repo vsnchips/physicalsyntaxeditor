@@ -1,4 +1,24 @@
+//RANT
+//Where should the formatting an interactivity mappings be stored?
+//The nodes are created when the parser reads raw code.
+
+//Manual input can edit names, or create fresh code.
+//Changing a name is the same as changing the 'data' field in the ast node.
+//Replacing a token with more code changes the type of the node to whatever gets parsed.
+
+//The draw stack must be updated when new things are added:
+//// Point the current draw node to the new object
+//// Recursively build its child nodes.
+//RANT
+
+//Contents and structure of the draw tree
+//   Draw trees add STATEMENTS to BLOCKS.
+//   BLOCKS present STATEMENTS in their order of execution.
+//   The FOCUS tracks its position in the statement order.
+     
+
 var drawtree = {
+
 	programroot:null;
 }
 
@@ -7,9 +27,8 @@ dtNode = function(astNode, par = null){
 	this.myNode = astNode;
 }
 
+var drawTreePlugin = function(babel){
 
-
-function(babel){
 	var t = babel.types;
 	return {
 		visitor:{
@@ -24,6 +43,12 @@ drawtree
 	};
 }
 
+//Maybe dont need this?
+//Maybe tranform code snippets, make sub asts, and append thecontents of the bodies to the current position in the current body.
+//
+//Editing operations:
+//Insert mode, start typnig.
+//
 function makedrawstack( freshAst){	
 	//this func walks an ast, constructing appropriate representations, and appends the resulting tree to the current node.
 
@@ -52,17 +77,6 @@ function makedrawstack( freshAst){
 		}
 
 }
-
-//Where should the formatting an interactivity mappings be stored?
-//The nodes are created when the parser reads raw code.
-
-//Manual input can edit names, or create fresh code.
-//Changing a name is the same as changing the 'data' field in the ast node.
-//Replacing a token with more code changes the type of the node to whatever gets parsed.
-
-//The draw stack must be updated when new things are added:
-//// Point the current draw node to the new object
-//// Recursively build its child nodes.
 
 function drawAst(ast,focus){
 

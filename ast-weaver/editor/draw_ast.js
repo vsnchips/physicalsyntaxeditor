@@ -1,4 +1,29 @@
-	
+var drawtree = {
+	programroot:null;
+}
+
+dtNode = function(astNode, par = null){
+	this.par=null;
+	this.myNode = astNode;
+}
+
+
+
+function(babel){
+	var t = babel.types;
+	return {
+		visitor:{
+			Identifier: { enter(){ function(path,state){
+drawtree
+			}}},
+		
+			Identifier: { enter(){ function(path,state){
+
+			}}}
+		}
+	};
+}
+
 function makedrawstack( freshAst){	
 	//this func walks an ast, constructing appropriate representations, and appends the resulting tree to the current node.
 
@@ -39,8 +64,9 @@ function makedrawstack( freshAst){
 //// Point the current draw node to the new object
 //// Recursively build its child nodes.
 
-functionDrawAst(ast,focus){
+function drawAst(ast,focus){
 
+/*
 	-The drawer walks from the focus, and draws the tree, recursing until functionality is blackboxed by focus rules, like running out of room.
 	
 	-The tree only represents the code within a line.
@@ -53,6 +79,7 @@ functionDrawAst(ast,focus){
 
 	-When you want to click through to mutate an encapsulated thing, you are changing the master copy.
 	There may be an operation added to promote a literal or a variable to an adhoc parameter, with a default argument.
+*/
 
 	//draw_a_tree(tree, d_region){
 

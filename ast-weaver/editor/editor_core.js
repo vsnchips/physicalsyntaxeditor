@@ -39,7 +39,8 @@ function transform_cool(){
 
   clog("transforming hardcode");
   coolast = Babel.transform(hardcode,{
-    plugins: []
+	  ast:true,
+	  plugins: []
   })
 }
 
@@ -108,7 +109,7 @@ document.getElementById('event_transform_hot').addEventListener('click', functio
 });
 
 document.getElementById('event_transform_cool').addEventListener('click', function(event) {
-  transform_hot();
+  transform_cool();
 });
 
 

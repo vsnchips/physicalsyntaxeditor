@@ -19,7 +19,7 @@
 
 var drawtree = {
 
-	programroot:null;
+	programroot:null
 }
 
 dtNode = function(astNode, par = null){

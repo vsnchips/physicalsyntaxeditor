@@ -20,7 +20,7 @@ function mode(setname,template = {}){
     template.copyTo(this);
     name = thename;
     
-    map(character,action){
+    map=function(character,action){
         symbol = character;
 	meaning = action;
 	
@@ -58,5 +58,11 @@ function onMouseMove(e){
 }
 
 function onKey(event){
-   parseEvent(symbol("mouseup"));
+	console.log(event);
+   parseEvent(symbol(event));
 }
+// DOM mapping
+document.getElementsByTagName("body")[0].addEventListener("keypress",function(event){onKey(event)});
+document.getElementsByTagName("body")[0].addEventListener("mousemove",function(event){onKey(event)});
+document.getElementsByTagName("body")[0].addEventListener("mousedown",function(event){onKey(event)});
+

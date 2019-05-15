@@ -830,7 +830,7 @@ keys:["params"]
 
 
 addNodeTypeObject({
-name:"typeameterInstantiation",
+name:"typeParameterInstantiation",
 keys:["params"]
 })
 

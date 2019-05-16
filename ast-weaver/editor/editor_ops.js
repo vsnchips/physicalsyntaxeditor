@@ -12,7 +12,7 @@ function storeify(expressionNode,name){
 	return declNode;
 }
 //funcification
-function
+
 function funcify(expression,name){
 	let t=Babel.types;
         declNode=t.functionDeclaration(name,[],t.blockStatement([

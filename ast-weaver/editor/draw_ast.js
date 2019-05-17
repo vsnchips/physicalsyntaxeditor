@@ -28,6 +28,7 @@ dtNode = function(astNode, par = null){
 	this.myNode = astNode;
 }
 
+/*
 var drawTreePlugin = function(babel){
 
 	var t = babel.types;
@@ -43,6 +44,7 @@ drawtree
 		}
 	};
 }
+*/
 
 //Maybe dont need this?
 //Maybe tranform code snippets, make sub asts, and append thecontents of the bodies to the current position in the current body.
@@ -54,7 +56,7 @@ function makedrawstack( freshAst){
 	//this func walks an ast, constructing appropriate representations, and appends the resulting tree to the current node.
 
 	if(!freshAst.program){
-		error( not an ast root!); return;
+		error( "not an ast root!"); return;
 	}
         checkNode = freshAst.program
 

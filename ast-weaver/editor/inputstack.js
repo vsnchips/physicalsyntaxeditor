@@ -102,4 +102,8 @@ document.getElementsByTagName("body")[0]
 	.addEventListener("mousemove",function(event){onKey(event)});
 document.getElementsByTagName("body")[0].
 	addEventListener("mousedown",function(event){onKey(event)});
+//Right Click Capture
+document.getElementsByTagName("body")[0]
+	.addEventListener('contextmenu',function(event){event.preventDefault().alert("success!");
+		return false;}, false);
 

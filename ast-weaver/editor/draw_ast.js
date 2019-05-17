@@ -16,8 +16,6 @@
 //   BLOCKS present STATEMENTS in their order of execution.
 //   The FOCUS tracks its position in the statement order.
 
-
-
 var drawtree = {
 
 	programroot:null
@@ -60,6 +58,7 @@ function makedrawstack( freshAst){
 	}
         checkNode = freshAst.program
 
+	 	myElm.style.pos.x = location.x;
 	//as it finds types, it opens a rep resentation on a stack.
 
 	//as it steps out of them, it pushes them to a draw list.

@@ -35,15 +35,17 @@ function transform_hot(){
   })
 }
 
-function transform_cool(){
+function transform_ast_representation(){
 
   clog("transforming hardcode");
   coolast = Babel.transform(hardcode,{
 	  ast:true,
 	  plugins: []
   })
-}
+	//draw ast
+ astroot2elms(coolast.ast);
 
+}
 
 function write(){
   clog("Sending hot code");
@@ -85,10 +87,13 @@ socket.onmessage = function (event) {
 //  console.log('Received: ' + event.data);
     json = JSON.parse(event.data);
   if (json.kind == 'hardcode'){
-    hardcode = json.content;
-    clog('EVENT DATA CONTENT:' + JSON.parse(event.data).content);
-    transform_hot();
-    write();
+	  
+	  hardcode = json.content;
+	  clog('EVENT DATA CONTENT:' + JSON.parse(event.data).content);
+	  transform_hot();
+	  write();
+
+	  transform_ast_representation();
   }
 }
 
@@ -109,14 +114,12 @@ document.getElementById('event_transform_hot').addEventListener('click', functio
 });
 
 document.getElementById('event_transform_cool').addEventListener('click', function(event) {
-  transform_cool();
+  transform_ast_representation();
 });
-
 
 document.getElementById('event_write_hot').addEventListener('click', function(event) {
  write(); 
 });
-
 
 document.getElementById('event_write_cool').addEventListener('click', function(event) {
  render(); 

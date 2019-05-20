@@ -1,15 +1,23 @@
 <head>
 <script src="https://unpkg.com/@babel/standalone/babel.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.js"></script>
+
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+
+<link href='https://fonts.googleapis.com/css?family=Roboto+Mono' rel='stylesheet' type='text/css'>
 
 <style>
-body   { padding: 0; margin: 0; }
-.inner { position: relative; }
+body   {
+	font: 200 14px 'Roboto Mono';
+	padding: 0; margin: 0;
+	letter-spacing: 1px;
+}
 #controls {
   font: 300 12px "Helvetica Neue";
+position: fixed;
+bottom: 0;
+left:0;
   padding: 5;
-  margin: 5;
+  margin: 10;
   background: #f0f0f0;
   opacity: 0.3;
   -webkit-transition: opacity 0.2s ease;
@@ -19,15 +27,22 @@ body   { padding: 0; margin: 0; }
 }
 #controls:hover { opacity: 0.9; }
 
+#program {
+color: white;
+}
+.codeblock {
+	border-radius: 10px;
+	padding: 10;
+	margin: 5;
+	opacity: 0.8;
+}
+
 </style>
+
 </head>
 
 <body style="background-color: black">
-  <div>Hello Editor</div>
-<div class="outer">
-  <div class="inner">
-    <div id="canvasContainer"></div>
-  </div>
+	<div id="program">hello</div>
   <div id="controls">
   <button id='load'>load hard code</button>
   <button id='event_transform_hot'>transform hard code</button>
@@ -35,11 +50,16 @@ body   { padding: 0; margin: 0; }
   <button id='event_write_hot'>write hot code</button>
   <button id='event_write_cool'>write cool code</button>
   </div>
-</div>
+  <div id ='editor console'>
+	  <span id="console_head">Messages:</span>
+  </div>
+
 </body>
 
+<script src="node_types.js"></script>
 <script src="hotcode.js"></script>
 <script src="inputstack.js"></script>
 <script src="draw_ast.js"></script>
+<script src="editor_ops.js"></script>
 <script src="editor_core.js"></script>
-<script src="sketch.js"></script>
+

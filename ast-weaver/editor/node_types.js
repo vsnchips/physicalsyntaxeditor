@@ -8,7 +8,6 @@ function addNodeTypeObject(object){
     typeList[object.name]=object;
 };
 
-
 /* Template:
 
 addNodeTypeObject({
@@ -18,42 +17,112 @@ keys:[]
 
 */
 
+
+//Here, each nodes has a list of keys. 
+//The children are printed in the order of the keys.
+//It is the responsibility of this file to keep the syntax
+//as represented in the dom unswizzled.
+//
+//
+// strings we care about  (Where the names are)
+//
+// Identifier.name
+// jSXIdentifier[name]
+// jSXText[value]
+// regExpLiteral[pattern, flags]
+// program[sourceFile]
+// TSTypeParameter[name]
+// typeParameter[name]
+//
+
+ast_PrintableNodes={
+	
+	Identifier:"name",
+	JSXIdentifier:"name",
+	JSXText:"value",
+	RegExpLiteral:["pattern,flags"],
+	//program:"sourceFile",
+	TSTypeParameter:"name",
+	TypeParameter:"name",
+
+	//Lits and Ops,
+	BigIntLiteral:"value",
+	BooleanLiteral:"value",
+	DirectiveLiteral:"value",
+	NullLiteral:"value",           //Special case! just print null!
+	NumberLiteral:"value",
+	NumericLiteral:"value",
+	RegExpLiteral:"value",
+	StringLiteral:"value",
+	BinaryExpression:"operator",
+//	BinaryExpression:["left","operator","right"],
+	LogicalExpression:"operator",
+	UpdateExpression:"operator",//.+ prefix?",
+	UnaryExpression:"operator",//,  prefix ?",
+
+	StringTypeAnnotation:"value",
+	InterpreterDirective:"value",
+
+	// String node types with limited valid token sets, which are good for easy multichoice traversal.
+
+	//All the kinds, which form a limited grammar,
+	ClassMethod:"kind",
+	DeclareExportAllDeclaration:"exportKind",
+	DeclareNModule:"kind",
+	ImportSpecifier:"importKind",
+	ObjectMethod:"kind",
+	ObjectTypeProperty:"kind",
+	TSDeclareMethod:"kind",
+	VariableDeclaration:"kind",
+	Variance:"kind",
+
+	//Also, limited options for:
+	ClassMethod:"access",
+	ClassMethod:"accessibility",
+	TSDeclareMethod:"access",
+	TSDeclareMethod:"accessibility",
+	TSParameterProperty:"accessibility",
+	ClassProperty:"accessibility",// public private protected
+	DeclareExportDeclaration:"exportKind",
+
+	// Additionally:
+	ImportSpecifier:"importKind",
+	Program:"sourceType"// script|module,
+	//program:"sourceFile",
+};
+
+
 //I think there must be a more elegant way to do this, but whatever.
 //I'll only name the keys of subtrees the focus is interested in.
 //Anything else can just be edited as raw text.
 
 addNodeTypeObject({
-name:"anyTypeAnnotation",
+name:"AnyTypeAnnotation",
 keys:null
 })
 
 addNodeTypeObject({
-name:"arrayExpression",
+name:"ArrayExpression",
 keys:["elements"]
 })
 
 addNodeTypeObject({
-name:"arrayExpression",
+name:"ArgumentPlaceholder",
 keys:null
 })
 
 addNodeTypeObject({
-name:"argumentPlaceholder",
-keys:null
-})
-
-addNodeTypeObject({
-name:"arrayPattern",
+name:"ArrayPattern",
 keys:["elements","decorators","typeAnnotation"]
 })
 
 addNodeTypeObject({
-name:"arrayTypeAnnotation",
+name:"ArrayTypeAnnotation",
 keys:null
 })
 
 addNodeTypeObject({
-name:"arrowFunctionExpression",
+name:"ArrowFunctionExpression",
 keys:[
 "params",
 "body",
@@ -66,71 +135,77 @@ keys:[
 })
 
 addNodeTypeObject({
-name:"assignmenExpression",
+name:"AssignmenExpression",
 keys:["left","operator","right"]
 })
 
 addNodeTypeObject({
-name:"assignmentPattern",
+name:"AssignmentPattern",
 keys:["left","right"]
 })
 
 addNodeTypeObject({
-name:"awaitExpression",
+name:"AwaitExpression",
 keys:["argument"]
 })
 
 addNodeTypeObject({
-name:"bigIntLiteral",
+name:"BigIntLiteral",
 keys:["value"]
 })
 
 addNodeTypeObject({
-name:"binaryExpression",
-keys:["operator","left","right"]
+name:"BinaryExpression",
+keys:["left","operator","right"]
 })
 
 addNodeTypeObject({
-name:"bindExpression",
+name:"BindExpression",
 keys:["object","callee"]
 })
 
 addNodeTypeObject({
-name:"blockStatement",
+name:"BlockStatement",
 keys:["body","directives"]
 })
 
 addNodeTypeObject({
-name:"booleanLiteral",
+name:"BooleanLiteral",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"booleanLteralTypeAnnotation",
+name:"BooleanLteralTypeAnnotation",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"breakStatement",
+name:"BreakStatement",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"callExpression",
-keys:["callee","arguments","optional","typeArguments","typeParameters"]
+name:"CallExpression",
+keys:[
+"callee",
+"arguments",
+"optional",
+"typeArguments",
+"typeParameters"
+]
 })
 
 addNodeTypeObject({
-name:"catchClause",
+name:"CatchClause",
 keys:["param","body"]
 })
 
 
 addNodeTypeObject({
-name:"classDeclaration",
+name:"ClassDeclaration",
 keys:[
 "id",
 "superClass",
@@ -147,7 +222,7 @@ keys:[
 
 
 addNodeTypeObject({
-name:"classExpression",
+name:"ClassExpression",
 keys:[
 "id",
 "superClass",
@@ -164,13 +239,13 @@ keys:[
 
 
 addNodeTypeObject({
-name:"classImplements",
+name:"ClassImplements",
 keys:["id","typeParameters"]
 })
 
 
 addNodeTypeObject({
-name:"classMethod",
+name:"ClassMethod",
 keys:[
 "kind",
 "key",
@@ -188,410 +263,426 @@ keys:[
 
 
 addNodeTypeObject({
-name:"classProperty",
+name:"ClassProperty",
 keys:["key","value","typeAnnotation","decorators","computed"]
 })
 
 
 addNodeTypeObject({
-name:"conditionalExpression",
+name:"ConditionalExpression",
 keys:["test","consequent","alternate"]
 })
 
 
 addNodeTypeObject({
-name:"continueStatement",
+name:"ContinueStatement",
 keys:["label"]
 })
 
 
 addNodeTypeObject({
-name:"debuggerStatement",
+name:"DebuggerStatement",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"declareClass",
+name:"DeclareClass",
 keys:["id","typeParameters","body"]
 })
 
 
 addNodeTypeObject({
-name:"declareExportDeclaration",
+name:"DeclareExportDeclaration",
 keys:["declaration","specifiers","source"]
 })
 
 
 addNodeTypeObject({
-name:"declareFunction",
+name:"DeclareFunction",
 keys:["id"]
 })
 
 
 addNodeTypeObject({
-name:"defaultInterface",
+name:"DefaultInterface",
 keys:["id","typeParameters","extends","body"]
 })
 
 
 addNodeTypeObject({
-name:"declareModule",
+name:"DeclareModule",
 keys:["id","body"]
 })
 
 
 addNodeTypeObject({
-name:"declareModuleExports",
+name:"DeclareModuleExports",
 keys:["typeAnnotation"]
 })
 
 
 addNodeTypeObject({
-name:"declareOpaqueType",
+name:"DeclareOpaqueType",
 keys:["id","typeParameters","right"]
 })
 
 
 addNodeTypeObject({
-name:"decalreVariable",
+name:"DecalreVariable",
 keys:["id"]
 })
 
 
 addNodeTypeObject({
-name:"decorator",
+name:"Decorator",
 keys:["expression"]
 })
 
 addNodeTypeObject({
-name:"directive",
+name:"Directive",
 keys:["value"]
 })
 
 addNodeTypeObject({
-name:"directiveLiteral",
+name:"DirectiveLiteral",
 keys:["value"]
 })
 
 addNodeTypeObject({
-name:"doExpression",
+name:"DoExpression",
 keys:["body"]
 })
 
 addNodeTypeObject({
-name:"doWhileStatement",
+name:"DoWhileStatement",
 keys:["test","body"]
 })
 
 addNodeTypeObject({
-name:"emptyStatement",
+name:"EmptyStatement",
 keys:null
 })
 
 addNodeTypeObject({
-name:"emptyTypeAnnotation",
+name:"EmptyTypeAnnotation",
 keys:null
 })
 
 addNodeTypeObject({
-name:"existentialTypeParam",
+name:"ExistentialTypeParam",
 keys:null
 })
 
 addNodeTypeObject({
-name:"exportAllDeclaration",
+name:"ExportAllDeclaration",
 keys:["source"]
 })
 
 addNodeTypeObject({
-name:"exportDefaultSpecifier",
+name:"ExportDefaultSpecifier",
 keys:["exported"]
 })
 
 addNodeTypeObject({
-name:"exportNamedDeclaration",
+name:"ExportNamedDeclaration",
 keys:["declaration","specifiers","source"]
 })
 
 addNodeTypeObject({
-name:"exportNamespaceSpecifier",
+name:"ExportNamespaceSpecifier",
 keys:["exported"]
 })
 
 
 addNodeTypeObject({
-name:"exportSpecifier",
+name:"ExportSpecifier",
 keys:["local","exported"]
 })
 
 
 addNodeTypeObject({
-name:"expressionStatement",
+name:"ExpressionStatement",
 keys:["expression"]
 })
 
 
 addNodeTypeObject({
-name:"file",
+name:"File",
 keys:["program","comments","tokens"]
 })
 
 
 addNodeTypeObject({
-name:"forAwaitStatement",
+name:"ForAwaitStatement",
 keys:["left","right","body"]
 })
 
 
 addNodeTypeObject({
-name:"forInStatement",
+name:"ForInStatement",
 keys:["left","right","body"]
 })
 
 
 addNodeTypeObject({
-name:"forOgStatement",
+name:"ForOfStatement",
 keys:["left","right","body"]
 })
 
 
 addNodeTypeObject({
-name:"forStatement",
+name:"ForStatement",
 keys:["init","test","update","body"]
 })
 
 
 addNodeTypeObject({
-name:"functionDeclaration",
-keys:["id","params","body","generator","async","returnType","typeParameters"]
+name:"FunctionDeclaration",
+keys:[
+"id",
+"params",
+"body",
+"generator",
+"async",
+"returnType",
+"typeParameters"
+]
 })
 
 
 addNodeTypeObject({
-name:"functionExpression",
-keys:["id","params","body","generator","async","returnType","typeParameters"]
+name:"FunctionExpression",
+keys:[
+"id",
+"params",
+"body",
+"generator",
+"async",
+"returnType",
+"typeParameters"
+]
 })
 
 
 addNodeTypeObject({
-name:"functionTypeAnnotation",
+name:"FunctionTypeAnnotation",
 keys:["typeParameters","params","rest","returnType"]
 })
 
 
 addNodeTypeObject({
-name:"functionTypeParam",
+name:"FunctionTypeParam",
 keys:["name","typeAnnotation"]
 })
 
 
 addNodeTypeObject({
-name:"genericTypeAnnotation",
+name:"GenericTypeAnnotation",
 keys:["id","typeParameters"]
 })
 
 
 addNodeTypeObject({
-name:"identifier",
+name:"Identifier",
 keys:["name","decorators","typeAnnotation"]
 })
 
 
 addNodeTypeObject({
-name:"ifStatement",
+name:"IfStatement",
 keys:["test","consequent","alternate"]
 })
 
 
 addNodeTypeObject({
-name:"import",
+name:"Import",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"importDeclaration",
+name:"ImportDeclaration",
 keys:["specifiers","source"]
 })
 
 
 addNodeTypeObject({
-name:"importDefaultSpecifier",
+name:"ImportDefaultSpecifier",
 keys:["local"]
 })
 
 
 addNodeTypeObject({
-name:"importNamespaceSpecifier",
+name:"ImportNamespaceSpecifier",
 keys:["local"]
 })
 
 
 addNodeTypeObject({
-name:"importSpecifier",
+name:"ImportSpecifier",
 keys:["local","imported","importKind"]
 })
 
 
 addNodeTypeObject({
-name:"interfaceDeclaration",
+name:"InterfaceDeclaration",
 keys:["id","typeParameters","extends","body"]
 })
 
 
 addNodeTypeObject({
-name:"interfaceExtends",
+name:"InterfaceExtends",
 keys:["id","typeParameters"]
 })
 
 
 addNodeTypeObject({
-name:"intersectionTypeAnnotation",
+name:"IntersectionTypeAnnotation",
 keys:["types"]
 })
 
 
 addNodeTypeObject({
-name:"jSXAttribute",
+name:"JSXAttribute",
 keys:["name","value"]
 })
 
 
 addNodeTypeObject({
-name:"jSXClosingElement",
+name:"JSXClosingElement",
 keys:["name"]
 })
 
 
 addNodeTypeObject({
-name:"jSXElement",
+name:"JSXElement",
 keys:["openingElement","closingElement","children","selfClosing"]
 })
 
 
 addNodeTypeObject({
-name:"jSXEmptyExpression",
+name:"JSXEmptyExpression",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"jSXExpressionContainer",
+name:"JSXExpressionContainer",
 keys:["expression"]
 })
 
 
 addNodeTypeObject({
-name:"jSXIdentifier",
+name:"JSXIdentifier",
 keys:["name"]
 })
 
 
 addNodeTypeObject({
-name:"jSXMemberExpression",
+name:"JSXMemberExpression",
 keys:["object","property"]
 })
 
 
 addNodeTypeObject({
-name:"jSXNamespacedName",
+name:"JSXNamespacedName",
 keys:["namespace","name"]
 })
 
 
 addNodeTypeObject({
-name:"jSXOpeningElement",
+name:"JSXOpeningElement",
 keys:["namespace","name"]
 })
 
 
 addNodeTypeObject({
-name:"jSXOpeningElement",
+name:"JSXOpeningElement",
 keys:["name","attributes","selfClosing"]
 })
 
 
 addNodeTypeObject({
-name:"jSXSpreadAttribute",
+name:"JSXSpreadAttribute",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"jSXSpreadChild",
+name:"JSXSpreadChild",
 keys:["expression"]
 })
 
 
 addNodeTypeObject({
-name:"jSXText",
+name:"JSXText",
 keys:["value"]
 })
 
 
 addNodeTypeObject({
-name:"labeledStatement" ,
+name:"LabeledStatement" ,
 keys:["label","body"]
 })
 
 
 addNodeTypeObject({
-name:"logicalExpression",
-keys:["operator","left","right"]
+name:"LogicalExpression",
+keys:["left",,"operator","right"]
 })
 
 
 addNodeTypeObject({
-name:"memberExpression",
+name:"MemberExpression",
 keys:["object","property","computed"]
 })
 
 
 addNodeTypeObject({
-name:"metaProperty",
+name:"MetaProperty",
 keys:["meta","property"]
 })
 
 
 addNodeTypeObject({
-name:"mixedTypeAnnotation",
+name:"MixedTypeAnnotation",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"newExpression",
+name:"NewExpression",
 keys:["callee","arguments"]
 })
 
 
 addNodeTypeObject({
-name:"noop",
+name:"Noop",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"nullLiteral",
+name:"NullLiteral",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"nullLiteralTypeAnnotation",
+name:"NullLiteralTypeAnnotation",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"objectExpression",
+name:"ObjectExpression",
 keys:["properties"]
 })
 
 
 addNodeTypeObject({
-name:"objectMethod",
+name:"ObjectMethod",
 keys:[
 "kind",
 "key",
@@ -608,115 +699,115 @@ keys:[
 
 
 addNodeTypeObject({
-name:"objectPattern",
+name:"ObjectPattern",
 keys:["properties","typeAnnotation","decorators"]
 })
 
 
 addNodeTypeObject({
-name:"objectProperty",
+name:"ObjectProperty",
 keys:["key","value","computed","shorthand","decorators"]
 })
 
 
 addNodeTypeObject({
-name:"objectTypeAnnotation",
+name:"ObjectTypeAnnotation",
 keys:["properties","indexers","callProperties"]
 })
 
 
 addNodeTypeObject({
-name:"objectTypeCallProperty",
+name:"ObjectTypeCallProperty",
 keys:["value"]
 })
 
 
 addNodeTypeObject({
-name:"objectTypeIndexer",
+name:"ObjectTypeIndexer",
 keys:["id","key","value"]
 })
 
 
 addNodeTypeObject({
-name:"objectTypeProperty",
+name:"ObjectTypeProperty",
 keys:["key","value"]
 })
 
 
 addNodeTypeObject({
-name:"objectTypeSpreadProperty",
+name:"ObjectTypeSpreadProperty",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"opaqueType",
+name:"OpaqueType",
 keys:["id","typeParameters","impltype","supertype"]
 })
 
 
 addNodeTypeObject({
-name:"parenthesizedExpression",
+name:"ParenthesizedExpression",
 keys:["expression"]
 })
 
 
 addNodeTypeObject({
-name:"program",
+name:"Program",
 keys:["body","directives"]
 })
 
 
 addNodeTypeObject({
-name:"quantifiedTypeIdentifier",
+name:"QuantifiedTypeIdentifier",
 keys:["id","quantification"]
 })
 
 
 addNodeTypeObject({
-name:"regExpLiteral",
+name:"RegExpLiteral",
 keys:["pattern","flags"]
 })
 
 
 addNodeTypeObject({
-name:"restElement",
+name:"RestElement",
 keys:["argument","typeAnnotation","decorators"]
 })
 
 
 addNodeTypeObject({
-name:"restProperty",
+name:"RestProperty",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"returnStatement",
+name:"ReturnStatement",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"sequenceExpression",
+name:"SequenceExpression",
 keys:["expressions"]
 })
 
 
 addNodeTypeObject({
-name:"spreadElement",
+name:"SpreadElement",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"spreadProperty",
+name:"SpreadProperty",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"stringLiteral",
+name:"StringLiteral",
 keys:["value"]
 })
 
@@ -734,163 +825,163 @@ keys:null
 
 
 addNodeTypeObject({
-name:"super",
+name:"Super",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"switchCase",
+name:"SwitchCase",
 keys:["test","consequent"]
 })
 
 
 addNodeTypeObject({
-name:"switchStatement",
+name:"SwitchStatement",
 keys:["discriminant","cases"]
 })
 
 
 addNodeTypeObject({
-name:"taggedTemplateExpression",
+name:"TaggedTemplateExpression",
 keys:["tag","quasi"]
 })
 
 
 addNodeTypeObject({
-name:"templateElement",
+name:"TemplateElement",
 keys:["value","tail"]
 })
 
 
 addNodeTypeObject({
-name:"templateLiteral",
+name:"TemplateLiteral",
 keys:["quasis","expressions"]
 })
 
 
 addNodeTypeObject({
-name:"thisExpression",
+name:"ThisExpression",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"thisTypeAnnotation",
+name:"ThisTypeAnnotation",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"throwStatement",
+name:"ThrowStatement",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"tryStatement",
+name:"TryStatement",
 keys:["block", "handler","finalizer","body"]
 })
 
 
 addNodeTypeObject({
-name:"tupleTypeAnnotation",
+name:"TupleTypeAnnotation",
 keys:["types"]
 })
 
 
 addNodeTypeObject({
-name:"typeAlias",
+name:"TypeAlias",
 keys:["id","typeParameters","right"]
 })
 
 
 addNodeTypeObject({
-name:"typeAnnotation",
+name:"TypeAnnotation",
 keys:["typeAnnotation"]
 })
 
 
 addNodeTypeObject({
-name:"typeCastExpression",
+name:"TypeCastExpression",
 keys:["expression","typeAnnotation"]
 })
 
 
 addNodeTypeObject({
-name:"typeParameter",
+name:"TypeParameter",
 keys:["bound"]
 })
 
 
 addNodeTypeObject({
-name:"typeParameterDeclaration",
+name:"TypeParameterDeclaration",
 keys:["params"]
 })
 
 
 addNodeTypeObject({
-name:"typeParameterInstantiation",
+name:"TypeParameterInstantiation",
 keys:["params"]
 })
 
 
 addNodeTypeObject({
-name:"typeofTypeAnnotation",
+name:"TypeofTypeAnnotation",
 keys:["argument"]
 })
 
 
 addNodeTypeObject({
-name:"unaryExpression",
+name:"UnaryExpression",
 keys:["operator","argument","prefix"]
 })
 
 
 addNodeTypeObject({
-name:"unionTypeAnnotation",
+name:"UnionTypeAnnotation",
 keys:["types"]
 })
 
 
 addNodeTypeObject({
-name:"updateExpression",
+name:"UpdateExpression",
 keys:["operator","argument","prefix"]
 })
 
 
 addNodeTypeObject({
-name:"variableDeclaration",
+name:"VariableDeclaration",
 keys:["kind","declarations"]
 })
 
 
 addNodeTypeObject({
-name:"variableDeclarator",
+name:"VariableDeclarator",
 keys:["id","init"]
 })
 
 
 addNodeTypeObject({
-name:"voidTypeAnnotation",
+name:"VoidTypeAnnotation",
 keys:null
 })
 
 
 addNodeTypeObject({
-name:"whileStatement",
+name:"WhileStatement",
 keys:["test","body"]
 })
 
 
 addNodeTypeObject({
-name:"withStatement",
+name:"WithStatement",
 keys:["object","body"]
 })
 
 
 addNodeTypeObject({
-name:"yieldExpression",
+name:"YieldExpression",
 keys:["argument","delegate"]
 })
 

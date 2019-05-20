@@ -1,6 +1,5 @@
 var codeBlockDrawable = function{
 /*
-*/
 	//vertically or horizontally arrange statements.
  	//render text using browser's dom methods..?
 	//or write tokens to DOM objects with style sheets, and move them around.

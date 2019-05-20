@@ -10,11 +10,13 @@ if (pargs.length > 3){
 
   var fs=require("fs");
   var hardcode;
+  var loadhardcode = function(){
   fs.readFile(pargs[2]+pargs[3],'utf8',function(error,contents){
     hardcode=JSON.stringify({kind:'hardcode','content':(contents), fl: 0.00005});
   });
+	};
   
-  //Start the editor webserver
+  //////////////////////////////////////////////////////////////Start the editor webserver
 
   var editserver = require("live-server");
 
@@ -33,7 +35,7 @@ if (pargs.length > 3){
   editserver.start(params);
 
 
-  //HotCode Server
+  ///////////////////////////////////////////////////////////////HotCode Server
   var hothome = pargs.length> 4 ? pargs[4]:"index.html";
 
   //Copy the project to the hotdir
@@ -62,7 +64,7 @@ if (pargs.length > 3){
     });
   });
 
-  /*
+
   //Start the soft target liveserver
   var softtargetserver = require("live-server");
   var tparams = {
@@ -75,7 +77,7 @@ if (pargs.length > 3){
     middleware: [function(req, res, next) { next(); }] // Takes an array of Connect-compatible middleware that are injected into the server middleware stack
   };
   softtargetserver.start(tparams);
-*/
+
 
   //WebSockets
   var WSS= require('ws').Server;
@@ -96,7 +98,8 @@ if (pargs.length > 3){
     socket.on('message', function(message) {
 
       if(message == 'givemethehardcode'){
-        socket.send(hardcode);
+        loadhardcode();
+	socket.send(hardcode);
       }
 
       //JSON cases 

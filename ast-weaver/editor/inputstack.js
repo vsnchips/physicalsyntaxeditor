@@ -35,67 +35,91 @@ I'm playing with this idea of treating the interaction syntax as a state automat
 Basically, Im avoiding awkward chord shapes.
 For example, I will avoid creating states that neccessitate pressing the bottom row keys and numbers while holding down modifiers all on one hand. 
 
-In fact, avoiding modifier-holding hotkeys in general should help me see how much mileage I can get from the limited symbol set of single keystrokes, before leaning into expanding the symbol set.
+In fact, avoiding modifier-holding hotkeys in general should help me see how much mileage I can get from the limited symbol set of single keystrokes, before leaning into expanding the symbol s//Event parsing
+function parseEvent(symbol){
+    currentMode.posture[symbol] ();
+}et.
 I think of modifier holding hotkeys as as "micro-ladders", because they require multiple steps to express something that is atomic from the program's perspective, and the modifier key must be held down first.
 
 Anyway, postures are being identified and chained together through testing. They could be useful as templates for the various states of input expectance.
 
 */
 
-*/
 var currentMode;
-var modeList={};
 var mousePos=[0,0];
 
-function addmode(mode){
-    modeList[mode.name]=mode;
+//Focus object
+var theFocus = {
+	focusedNode : null,
+	currentMode = restMode;
+	highlightElm : function(caller) {
+		focusedNode : caller.level < focusedNode.level ? focusedNode : caller;
+	},
+	clearFocus : function() {focusedNode = null;},
+	//Event parsing
+	parseEvent : function(symbol){
+		currentMode.posture[symbol] (symbol);
+	}
+};
+
+var modeList={};
+
+// Default Symbol Template!
+defaultModeTemplate = {
+	name:'default',
+	posture:{
+		mousedown: () => { theFocus.chord = true;  } ,
+		mouseup: () => { theFocus.chord = false;   }}	
+};
+
+restMode = makeMode("rest");
+leftDragMode = makeMode("leftdrag",restMode);
+
+leftDragMode.posture["mousemove"] = (symbol) => {theFocus.focusedNode.inform(symbol)}; 
+
+function makeMode(setname,template = {}){
+	let newmode;
+	template.copyTo(newmode);
+	newmode.name = setname;
+	modeList[newmode.name] = newmode;
+	return newmode;
 }
 
-function mode(setname,template = {}){
 
-    template.copyTo(this);
-    name = thename;
-    
-    map=function(character,action){
-        symbol = character;
-	meaning = action;
-	
-        posture[symbol] = meaning;
-    }
-
-}
-
-//Event parsing
-function parseEvent(symbol){
-    currentMode.posture[symbol] ();
-}
+ function mapmode(mode,character,action){
+    	mode.symbol = character;
+	mode.meaning = action;
+	mode.posture[symbol] = meaning;
+ }
 
 function symbol(form = "bang!", analog=false, deltas={}){ 
-
+	return { form: form, analog: analog, deltas: deltas};
 }
+// atomic symbol mappings
 
 function onMouseUp(event){
     mousePos=[e.clientX,e.clientY];
-    parseEvent(symbol("mouseup"));
+    theFocus.parseEvent(symbol("mouseup"));
 }
 
 function onMouseDown(event){
     mousePos=[e.clientX,e.clientY];
-    parseEvent(symbol("mousedown"));
+    theFocus.parseEvent(symbol("mousedown"));
 }
 
 function onMouseMove(e){
     //deltas
     deltas={x:e.clientX-mousePos.x,y:e.clientY-mousePos.y};
     mousePos=[e.clientX,e.clientY];
-    parseEvent(symbol("mousemove", true, deltas ));
+    theFocus.parseEvent(symbol("mousemove", true, deltas ));
 }
 
 function onKey(event){
 	console.log(event);
-   parseEvent(symbol(event));
+   	theFocus.parseEvent(symbol(event.key));
 }
-// DOM mapping
+
+// high level DOM mapping
 document.getElementsByTagName("body")[0]
 	.addEventListener("keypress",function(event){onKey(event)});
 document.getElementsByTagName("body")[0]
@@ -106,4 +130,7 @@ document.getElementsByTagName("body")[0].
 document.getElementsByTagName("body")[0]
 	.addEventListener('contextmenu',function(event){event.preventDefault().alert("success!");
 		return false;}, false);
+
+
+
 

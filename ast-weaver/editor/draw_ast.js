@@ -92,7 +92,6 @@ function astroot2elms(wholeAst){
 
 var litRepCount = 0;
 
-function ast2elms(tree,targetElm){	
 
 	//This func walks an ast, constructing elements.	
 	
@@ -106,23 +105,21 @@ function ast2elms(tree,targetElm){
 	
 	//It returns its DOM elements in an array.
 
+function ast2elms(tree,targetElm){	
 	targetElm.innerHTML="";   //Clear the html here.
 	let mElms=[];	
-	
+
 	//null literal case
 	if(!tree.type){
 		clog("NO TYPE STR!" + tree); 
 		return;
 	}
-
 	if (tree.type==="nullLiteral"){
 		targetElm.setInnerHTML("null"); 
-		
 		return mElms;
 	}
 
 	makechild = function(node,childkey,lev=0){
-	
 		//Node case
 		if(node){
 		if (node.type){
@@ -140,8 +137,6 @@ function ast2elms(tree,targetElm){
 				node.type === "BigIntLiteral" 
 			){
 				targetElm.slide = function(analogs){
-				//	let target = newChild.children[0].innerHTML;
-				//	newChild.children[0].innerHTML = String.toInt(target) + analogs[0];			
 				}	
 			}
 
@@ -166,6 +161,7 @@ function ast2elms(tree,targetElm){
 
 	type = typeList[tree.type];	
 	if(type && type.keys){
+
 			// Iterating an array is different depening on whether or not its key is "body".
 			// So iteration must be done at a distinguishing scope like this one.
 			
@@ -188,7 +184,6 @@ function ast2elms(tree,targetElm){
 			}
 		});
 	}
-
 	return mElms;
 }
 
@@ -205,44 +200,4 @@ function drawEdges(rootAst){
 		//
 
 	}
-/*   Ideation Rant
-	-The drawer walks from the focus, and draws the tree, iterating until functionality is blackboxed by focus rules, like running out of room.
-	-Actually, recursion is an inappropriate principle here, because nothing is drawn without respect to its place within the user's view,
-	posture, and interaction state.
-
-	An ast gets rendered as a div.
-	There must be a significance for user discrimination between different blocks of code, different views of the same code, and different views of different code.
-	Its confusing to say, but it might be less confusing to see.
-
-	In 3d modelilng packages, its apparent that there are three orthogonal views and a perspective view.
-	Could a similar scheme work for code?
-
-	Concurrent views are a prerequisite for juxtaposition.
-	Things which the user may need to juxtapose:
-	-Declarations of things
-	-Documentation, function prototypes.
-	-Search results.
-
-	Expanded code folds are a form of juxtaposition.
-	Sometimes, for loops may be nested.
-	It is absolutely normal to juxtapose nested strctures against declarations several levels higher than the working block.
-	It would be silly for this to open a new view. Sometimes these structures are only a few lines.
-	What is the distinguishing principle?
-	Avoid premature abstraction.
-
-	Perhaps, by default, things on the ast are inlined. until a block statement begins?
-	Formatting: 'newlined' blockStatements may need to be nudged over to the left. 
-	Sometimes the user's sense of content chunking will differ to the ast.
-	
-	Can divs be on the same line? - no need. use spans.
-
-	-The tree only represents the code within a line.
-	Call expressions encapsulate by default.
-
-	-Users may want to promote literals to parameters via code transformation.
-	-The literal should be copied to every call as an argument, which can then be manipulated via hotcode injection. TODO: does this make sense?
-
-	When you want to click through to mutate an encapsulated thing, you are changing the master copy.
-	There may be an operation added to promote a literal or a variable to an adhoc parameter, with a default argument.
-*/
 

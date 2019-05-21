@@ -38,3 +38,13 @@ function dragTo(drawable,focus){
 // can jump to it in rest mode immediately after releasing the chord.
 //
 // So like, play a chord, then jump into it.
+//
+
+
+// Element Interaction Models
+var interModels = {
+
+	numericSlide: {
+
+	}
+}

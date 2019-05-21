@@ -171,7 +171,7 @@ keys:["body","directives"]
 
 addNodeTypeObject({
 name:"BooleanLiteral",
-keys:null
+keys:["true"]
 })
 
 
@@ -672,6 +672,18 @@ keys:null
 addNodeTypeObject({
 name:"NullLiteralTypeAnnotation",
 keys:null
+})
+
+
+addNodeTypeObject({
+name:"NumberLiteral",
+keys:["value"]
+})
+
+
+addNodeTypeObject({
+name:"NumericLiteral",
+keys:["value"]
 })
 
 

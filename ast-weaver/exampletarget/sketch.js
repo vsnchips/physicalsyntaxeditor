@@ -19,3 +19,7 @@ function withArgs(thisArg, thatArg) {
   doMoreStuff();
   return;
 }
+
+let foo;
+
+call(8);

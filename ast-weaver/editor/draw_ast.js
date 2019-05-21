@@ -73,9 +73,6 @@ function blockLevelObject(node){
 
 }
 
-//
-// TODO: TSTypes? 
-//  ???
 /*
  * It seems important to minimise representation of container nodes that do not contain mappable tokens.*/
 
@@ -89,15 +86,23 @@ function astroot2elms(wholeAst){
 	 if(!wholeAst.program){
 		clog( "not an ast root!"); return;
 	} else ast2elms( wholeAst.program, document.getElementById("program"));
+
+	litRepCount = 0;
 }
- 
+
+var litRepCount = 0;
+
 function ast2elms(tree,targetElm){	
 
 	//This func walks an ast, constructing elements.	
-	//First, if the node's a literal, it is printed.
 	
-	//Then, its keys are iterated.
-	//  Its keys which are arrays are iterated.
+	//at each node visitation, it iterated over the node's keys.
+	//a node's type is the key for the typelist. the typelist maps types to lists of their iterable keys.
+	//a seperate print map stores a map of printable types to their printable keys.
+	
+	// some node keys will point to arrays. these will be iterated.
+	//
+	//
 	
 	//It returns its DOM elements in an array.
 
@@ -116,78 +121,74 @@ function ast2elms(tree,targetElm){
 		return mElms;
 	}
 
-/*	
-	//Leaf Printing - if it has a leaf, or leaves, print them.
-	let printKeys=null;
-	printKeys=ast_PrintableNodes[tree.type];
-	if(printKeys){
-		if (Array.isArray(printKeys)) printKeys.forEach( (key) =>{ 
-			elm=targetElm.appendChild(document.createElement("SPAN"));
-			elm.innerText=tree[key];
-			mElms.push(elm);
-		});
-		else targetElm.innerText = tree[printKeys];
-	}
-*/
-
-	//print all the nonleaf children.
-
-
-	//TODO: Delete some comments, and make this cleaner ad smarter.
+	makechild = function(node,childkey,lev=0){
 	
-	type = typeList[tree.type];
-	if(type && type.keys){
-		type.keys.forEach( key => {
+		//Node case
+		if(node){
+		if (node.type){
+			//Make a body container div;
+			let newChild = targetElm.appendChild(document.createElement("SPAN"));
+			newChild.style.display = childkey === "body" ? "block" : "inline";
+			newChild.style.background = childkey === "body" ? "darkslateblue" : "magenta";
+			newChild.style.color = childkey === "body" ? "white" : "black";
+			newChild.style.borderRadius = childkey === "body" ? "15px" : "2px";
+			
+			// link the literal updates here.
+			if(
+				node.type === "NumericLiteral" ||
+				node.type === "NumberLiteral" ||
+				node.type === "BigIntLiteral" 
+			){
+				targetElm.slide = function(analogs){
+				//	let target = newChild.children[0].innerHTML;
+				//	newChild.children[0].innerHTML = String.toInt(target) + analogs[0];			
+				}	
+			}
 
+			newChild.level=lev;
+/*recurse*/		ast2elms( node , newChild);
+			mElms.push(newChild);
+				return newChild;
+		}
+		else
+		{	
+			//leaf case
+
+			if (ast_PrintableNodes[this.type] === childkey || (Array.isArray(ast_PrintableNodes[this.type])
+			&& ast_PrintableNodes[this.type].includes( childkey ))){
+					let elm = targetElm.appendChild(document.createElement("SPAN"));
+					elm.innerText = node;
+				return elm;
+				}
+			}
+		}
+	}
+
+	type = typeList[tree.type];	
+	if(type && type.keys){
 			// Iterating an array is different depening on whether or not its key is "body".
 			// So iteration must be done at a distinguishing scope like this one.
 			
+		type.keys.forEach( key => {
+
 			if (Array.isArray(tree[key])){ 
-			
 			//body div
 			if (key === "body" ){
 				clog("new body");
 				targetElm=targetElm.appendChild(document.createElement("SPAN"));
-
 				targetElm.style.display = "block";
+				targetElm.style.background='blue';
 				targetElm.className="codeblock";
 			}
-
-				tree[key].forEach( item => { 
-
-					//Node case
-					if (item.type){
-						//Make a body container div;
-						newChild = targetElm.appendChild(document.createElement("SPAN"));
-						newChild.style.display = key === "body" ? "block" : "inline";
-						newChild.style.background = key === "body" ? "darkslateblue" : "magenta";
-						newChild.style.color = key === "body" ? "white" : "black";
-						newChild.style.borderRadius = key === "body" ? "15px" : "2px";
-						/*recurse*/				ast2elms( item , newChild);
-						mElms.push(newChild);
-					};
-
-			});
+				tree[key].forEach( childnode => { mElms.push(makechild.bind(tree)(childnode,key,targetElm.level+1)) });
 			}
 			else
 			{
-				newChild = targetElm.appendChild(document.createElement("SPAN"));
-
-				if (!tree[key] || !tree[key].type){
-
-					if (ast_PrintableNodes[tree.type]==key || (Array.isArray(ast_PrintableNodes[type])
-						&& ast_PrintableNodes[type].includes(key))){
-						elm=targetElm.appendChild(document.createElement("SPAN"));
-						elm.innerText=tree[key];
-						mElms.push(elm);
-
-					}; }
-				//Node type case
-				else{ ast2elms(tree[key],newChild);
-				mElms.push(newChild);}
+				mElms.push(makechild.bind(tree)(tree[key],key));
 			}
 		});
 	}
+
 	return mElms;
 }
 
@@ -204,11 +205,7 @@ function drawEdges(rootAst){
 		//
 
 	}
-
-/*
-function drawAst(ast,focus){
-
-/*
+/*   Ideation Rant
 	-The drawer walks from the focus, and draws the tree, iterating until functionality is blackboxed by focus rules, like running out of room.
 	-Actually, recursion is an inappropriate principle here, because nothing is drawn without respect to its place within the user's view,
 	posture, and interaction state.
@@ -249,36 +246,3 @@ function drawAst(ast,focus){
 	There may be an operation added to promote a literal or a variable to an adhoc parameter, with a default argument.
 */
 
-/*
-	//draw_a_tree(tree, d_region){
-
-	//if leaf
-	//if(isLeaf(Tree)){
-	drawLeaf(tree);
-	 return;
-	 }
-
-	//else
-	
-	 for(i = 0; i < children.length() in tree.childindexmap){
-		//tree.childindexmap are ordered. 
-		draw_a_tree(tree,drawRegion);
-		if()
-
-	}
-
-	}
-
-	function isLeaf(tree){
-		switch(tree.type){
-		 case 'NumericLiteral':
-		 	return true;
-		 case 'StringLiteral':
-		 	return true;
-		 default:
-		 	return false;
-		 }
-		 return false;
-	}
-
-}*/

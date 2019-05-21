@@ -151,6 +151,7 @@ function ast2elms(tree,targetElm){
 				//Method binding
 				//container.onmousedown = function(event){
 				newChild.onmousedown = function(event){
+					if (event.target == newChild.firstChild)
 					theFocus.highlightElm(newChild);
 				//	theFocus.highlightElm(container);
 				}
@@ -170,10 +171,14 @@ function ast2elms(tree,targetElm){
 		{	
 			//leaf case
 
+			//TODO: Resolve the extra container the leafs are being put in.
+
 			if (ast_PrintableNodes[this.type] === childkey || (Array.isArray(ast_PrintableNodes[this.type])
 			&& ast_PrintableNodes[this.type].includes( childkey ))){
 					let elm = container.appendChild(document.createElement("SPAN"));
 					elm.innerText = node + " ";
+					elm.value = node;
+					elm.litIndex=container.litIndex;
 				return elm;
 				}
 			}

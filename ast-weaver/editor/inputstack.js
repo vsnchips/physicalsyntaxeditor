@@ -54,10 +54,10 @@ theFocus = {
 	currentMode : null,
 	chordModifiers : [],
 	highlightElm : function(caller) {
-		if(!this.focusedNode || caller.level >= this.focusedNode.level){
+	//	if(!this.focusedNode || caller.level >= this.focusedNode.level){
 			this.focusedNode = caller;
 			clog ('reassigned focus to'+ caller.innerText);
-		}
+	//	}
 	},
 	clearFocus : function() {focusedNode = null;},
 	//Event parsing
@@ -109,13 +109,16 @@ function symbol(form = "bang!", analog=false, deltas={}){
 // atomic symbol mappings
 
 function onMouseUp(event){
-    mousePos=[event.clientX,event.clientY];
+    mousePos={x:event.clientX, y:event.clientY};
 				clog('up mouse');
     theFocus.parseEvent(symbol("mouseup"));
 }
 
 function onMouseDown(event){
-    mousePos=[event.clientX,event.clientY];
+
+    //TODO: Resolve concurrency with the other onclick methods. This is a hack.
+
+    mousePos={x:event.clientX, y:event.clientY};
 				clog('down mouse');
     theFocus.parseEvent(symbol("mousedown"));
 }

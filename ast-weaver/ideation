@@ -39,3 +39,17 @@
 	There may be an operation added to promote a literal or a variable to an adhoc parameter, with a default argument.
 */
 
+
+//Dragging, previews
+
+// If the parent captures a mouse click, how might a user indicate moving an element within a
+// movable parent?
+// If the user can see it, I want them to be able to interact with it.
+// If the user dives into something, maybe the thing can be popped up to the
+// juxtaposing scope.
+//
+// If the user discovers something during a chord, a focus marker should be set so they
+// can jump to it in rest mode immediately after releasing the chord.
+//
+// So like, play a chord, then jump into it.
+//

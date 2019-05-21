@@ -83,14 +83,17 @@ function blockLevelObject(node){
 
 //Layout Contract here is that divs will be constructed by whichever scope finds a reference to a body,
 function astroot2elms(wholeAst){
-	 if(!wholeAst.program){
+	if(!wholeAst.program){
 		clog( "not an ast root!"); return;
-	} else ast2elms( wholeAst.program, document.getElementById("program"));
+	} else{
+		wholeAst.program.lev=0;
+		ast2elms(wholeAst.program, document.getElementById("program"));
+	}
 
 	litRepCount = 0;
+	litReps=[];
 }
 
-var litRepCount = 0;
 
 
 	//This func walks an ast, constructing elements.	
@@ -105,7 +108,13 @@ var litRepCount = 0;
 	
 	//It returns its DOM elements in an array.
 
+var litRepCount = 0;
+var litReps = [];  // mutates lits
+
+
+
 function ast2elms(tree,targetElm){	
+	
 	targetElm.innerHTML="";   //Clear the html here.
 	let mElms=[];	
 
@@ -119,14 +128,14 @@ function ast2elms(tree,targetElm){
 		return mElms;
 	}
 
-	makechild = function(node,childkey,lev=0){
+	makechild = function(node,childkey,container,lev=0){
 		//Node case
 		if(node){
 		if (node.type){
 			//Make a body container div;
-			let newChild = targetElm.appendChild(document.createElement("SPAN"));
+			let newChild = container.appendChild(document.createElement("SPAN"));
 			newChild.style.display = childkey === "body" ? "block" : "inline";
-			newChild.style.background = childkey === "body" ? "darkslateblue" : "magenta";
+			newChild.style.background = childkey === "body" ? lev > -1 ? "black" : "darkslateblue"  : "magenta";
 			newChild.style.color = childkey === "body" ? "white" : "black";
 			newChild.style.borderRadius = childkey === "body" ? "15px" : "2px";
 			
@@ -136,8 +145,17 @@ function ast2elms(tree,targetElm){
 				node.type === "NumberLiteral" ||
 				node.type === "BigIntLiteral" 
 			){
-				targetElm.slide = function(analogs){
-				}	
+				//Literal Binding
+				container.myNode = node;
+				container.litIndex=litReps.length;
+				litReps.push(container);
+
+				//Method binding
+				container.onclick = () => {theFocus.highlightElm(container);}
+				if(node.type === "NumericLiteral" || node.type === "NumberLiteral") {
+					container.model = NumLitElementMethods;
+				}
+
 			}
 
 			newChild.level=lev;
@@ -151,7 +169,7 @@ function ast2elms(tree,targetElm){
 
 			if (ast_PrintableNodes[this.type] === childkey || (Array.isArray(ast_PrintableNodes[this.type])
 			&& ast_PrintableNodes[this.type].includes( childkey ))){
-					let elm = targetElm.appendChild(document.createElement("SPAN"));
+					let elm = container.appendChild(document.createElement("SPAN"));
 					elm.innerText = node;
 				return elm;
 				}
@@ -164,23 +182,23 @@ function ast2elms(tree,targetElm){
 
 			// Iterating an array is different depening on whether or not its key is "body".
 			// So iteration must be done at a distinguishing scope like this one.
-			
+			//body div
+			if (tree["body"] && Array.isArray(tree["body"] ) ){
+				clog("new body");
+				//targetElm=targetElm.appendChild(document.createElement("SPAN"));
+				targetElm.style.display = "block";
+				//targetElm.style.background='darkslateblue';
+				targetElm.className="codeblock";
+			}
 		type.keys.forEach( key => {
 
 			if (Array.isArray(tree[key])){ 
-			//body div
-			if (key === "body" ){
-				clog("new body");
-				targetElm=targetElm.appendChild(document.createElement("SPAN"));
-				targetElm.style.display = "block";
-				targetElm.style.background='blue';
-				targetElm.className="codeblock";
-			}
-				tree[key].forEach( childnode => { mElms.push(makechild.bind(tree)(childnode,key,targetElm.level+1)) });
+			
+				tree[key].forEach( childnode => { mElms.push(makechild.bind(tree)(childnode,key,targetElm,targetElm.level+1)) });
 			}
 			else
 			{
-				mElms.push(makechild.bind(tree)(tree[key],key));
+				mElms.push(makechild.bind(tree)(tree[key],key,targetElm,targetElm.level+1));
 			}
 		});
 	}

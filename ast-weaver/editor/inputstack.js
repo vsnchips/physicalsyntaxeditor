@@ -51,14 +51,14 @@ var mousePos=[0,0];
 //Focus object
 var theFocus = {
 	focusedNode : null,
-	currentMode = restMode;
+	currentMode : null,
 	highlightElm : function(caller) {
 		focusedNode : caller.level < focusedNode.level ? focusedNode : caller;
 	},
 	clearFocus : function() {focusedNode = null;},
 	//Event parsing
 	parseEvent : function(symbol){
-		currentMode.posture[symbol] (symbol);
+		this.currentMode.posture[symbol] (symbol);
 	}
 };
 
@@ -73,13 +73,19 @@ defaultModeTemplate = {
 };
 
 restMode = makeMode("rest");
-leftDragMode = makeMode("leftdrag",restMode);
+mapmode(restMode,'mousemove',() => {
+	if (this.chordModifiers[0] === 'mouse'){
+			if (methods) {
+				if (methods.analogDeltas) methods.analogDeltas.bind(theFocus.focusNode);	
+			}	
+	}
+} );
 
-leftDragMode.posture["mousemove"] = (symbol) => {theFocus.focusedNode.inform(symbol)}; 
+theFocus.currentMode=restMode;
 
-function makeMode(setname,template = {}){
-	let newmode;
-	template.copyTo(newmode);
+function makeMode(setname,template = { posture: {}}){
+	let newmode = {};
+	Object.assign(newmode,template);
 	newmode.name = setname;
 	modeList[newmode.name] = newmode;
 	return newmode;
@@ -89,7 +95,7 @@ function makeMode(setname,template = {}){
  function mapmode(mode,character,action){
     	mode.symbol = character;
 	mode.meaning = action;
-	mode.posture[symbol] = meaning;
+	mode.posture[symbol.form] = meaning;
  }
 
 function symbol(form = "bang!", analog=false, deltas={}){ 
@@ -115,7 +121,7 @@ function onMouseMove(e){
 }
 
 function onKey(event){
-	console.log(event);
+//	console.log(event);
    	theFocus.parseEvent(symbol(event.key));
 }
 
@@ -123,9 +129,9 @@ function onKey(event){
 document.getElementsByTagName("body")[0]
 	.addEventListener("keypress",function(event){onKey(event)});
 document.getElementsByTagName("body")[0]
-	.addEventListener("mousemove",function(event){onKey(event)});
+	.addEventListener("mousemove",function(event){onMouseMove(event)});
 document.getElementsByTagName("body")[0].
-	addEventListener("mousedown",function(event){onKey(event)});
+	addEventListener("mousedown",function(event){onMouseDown(event)});
 //Right Click Capture
 document.getElementsByTagName("body")[0]
 	.addEventListener('contextmenu',function(event){event.preventDefault().alert("success!");

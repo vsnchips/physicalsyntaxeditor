@@ -16,9 +16,9 @@ function updateHotLits(){
 function hotLitsLoop(){
   updateHotLits();
   setTimeout( () => {
- // window.requestAnimationFrame(hotLitsLoop);
+ window.requestAnimationFrame(hotLitsLoop);
   },
-  1000.0/3.0);
+  1000.0/30.0);
 }
 
 

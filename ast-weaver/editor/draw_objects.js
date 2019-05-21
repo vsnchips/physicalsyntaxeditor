@@ -5,7 +5,7 @@ NumLitElementMethods = {
 
 	set: function(val,innertarget){
 		innertarget.value = val; 
-		lits[this.litIndex]; 
+		lits[innertarget.litIndex] = val; 
 		//lits[0]; 
 		innertarget.innerHTML=val+' ';
 		//target.innerHTML=val;

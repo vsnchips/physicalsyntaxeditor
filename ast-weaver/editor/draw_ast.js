@@ -135,29 +135,27 @@ function ast2elms(tree,targetElm){
 			newChild.style.borderRadius = childkey === "body" ? "15px" : "2px";
 			
 			// link the literal updates here.
-			if(
+			if(     node.type === "StringLiteral"  ||
 				node.type === "NumericLiteral" ||
 				node.type === "NumberLiteral" ||
 				node.type === "BigIntLiteral" 
 			){
 				//Literal Binding
 				//container.myNode = node;
-				//container.litIndex=litReps.length;
-				//litReps.push(container);
 				newChild.myNode = node;
 				newChild.litIndex=litReps.length;
 				litReps.push(newChild);
 
+				if(node.type != 'StringLiteral'){
+
 				//Method binding
-				//container.onmousedown = function(event){
 				newChild.onmousedown = function(event){
 					if (event.target == newChild.firstChild)
 					theFocus.highlightElm(newChild);
-				//	theFocus.highlightElm(container);
 				}
 				if(node.type === "NumericLiteral" || node.type === "NumberLiteral") {
-					//container.model = NumLitElementMethods;
 					newChild.model = NumLitElementMethods;
+				}
 				}
 
 			}
@@ -193,9 +191,7 @@ function ast2elms(tree,targetElm){
 			//body div
 			if (tree["body"] && Array.isArray(tree["body"] ) ){
 				clog("new body");
-				//targetElm=targetElm.appendChild(document.createElement("SPAN"));
 				targetElm.style.display = "block";
-				//targetElm.style.background='darkslateblue';
 				targetElm.className="codeblock";
 			}
 		type.keys.forEach( key => {

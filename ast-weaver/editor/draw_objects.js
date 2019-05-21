@@ -3,13 +3,18 @@
 
 NumLitElementMethods = {
 
-	set: function(val){
-		this.value = val; 
+	set: function(val,target){
+		target.value = val; 
 		lits[this.litIndex]; 
-		this.children[0].innerHTML=val;
+		//lits[0]; 
+		target.children[0].innerHTML=val;
+		//target.innerHTML=val;
+		clog('setting' + val);
 	},
-	analogDeltas: (symbol) => {
-		this.set(this.value+symbol.deltas.x);	
+	analogDeltas: (symbol,target) => {
+
+		console.log('dragging!');
+		NumLitElementMethods.set(target.value+symbol.deltas.x,target);	
 	}
 
 }

@@ -46,7 +46,7 @@ Anyway, postures are being identified and chained together through testing. They
 */
 
 var currentMode;
-var mousePos={x:0,y:0};
+var mousePos=[0,0];
 
 //Focus object
 theFocus = {
@@ -56,13 +56,13 @@ theFocus = {
 	highlightElm : function(caller) {
 		if(!this.focusedNode || caller.level >= this.focusedNode.level){
 			this.focusedNode = caller;
-			clog ('reassigned focus to'+ caller.innerText);
+			clog ('reassigned focus to'+ caller);
 		}
 	},
 	clearFocus : function() {focusedNode = null;},
 	//Event parsing
 	parseEvent : function(symbol){
-		let call=this.currentMode.posture[symbol.form];
+		let call=this.currentMode.posture[symbol.name];
 		if (call) call(symbol);
 	}
 };
@@ -73,25 +73,23 @@ var modeList={};
 defaultModeTemplate = {
 	name:'default',
 	posture:{
-		mousedown: () => { theFocus.chord = true; theFocus.chordModifiers=['mouse']; } ,
-		mouseup: () => { theFocus.chord = false; 
-			if (theFocus.chordModifiers[0] && theFocus.chordModifiers[0] == 'mouse') theFocus.chordModifiers=[]
-		}}	
+		mousedown: () => { theFocus.chord = true;  } ,
+		mouseup: () => { theFocus.chord = false;   }}	
 };
 
 restMode = makeMode("rest");
-mapmode(restMode,'mousemove',(function(symbol){
-	if (this.chordModifiers[0] && this.chordModifiers[0] === 'mouse'){
-			if (this.focusedNode && this.focusedNode.model) {
+mapmode(restMode,'mousemove',(symbol) => {
+	if (theFocus.chordModifiers[0] && theFocus.chordModifiers[0] === 'mouse'){
+			if (methods) {
 				clog('move in rest');
-				if (this.focusedNode.model.analogDeltas) this.focusedNode.model.analogDeltas(symbol,this.focusedNode);	
+				if (methods.analogDeltas) methods.analogDeltas.bind(theFocus.focusNode)(symbol);	
 			}	
 	}
-}).bind(theFocus) ) ;
+} );
 
 theFocus.currentMode=restMode;
 
-function makeMode(setname,template = defaultModeTemplate){
+function makeMode(setname,template = { posture: {}}){
 	let newmode = {};
 	Object.assign(newmode,template);
 	newmode.name = setname;
@@ -99,8 +97,10 @@ function makeMode(setname,template = defaultModeTemplate){
 	return newmode;
 }
 
- function mapmode(mode,form,action){
-	mode.posture[form] = action;
+ function mapmode(mode,character,action){
+    	mode.symbol = character;
+	mode.meaning = action;
+	mode.posture[mode.symbol.form] = action;
  }
 
 function symbol(form = "bang!", analog=false, deltas={}){ 
@@ -109,22 +109,20 @@ function symbol(form = "bang!", analog=false, deltas={}){
 // atomic symbol mappings
 
 function onMouseUp(event){
-    mousePos=[event.clientX,event.clientY];
-				clog('up mouse');
+    mousePos=[e.clientX,e.clientY];
     theFocus.parseEvent(symbol("mouseup"));
 }
 
 function onMouseDown(event){
     mousePos=[event.clientX,event.clientY];
-				clog('down mouse');
     theFocus.parseEvent(symbol("mousedown"));
 }
 
 function onMouseMove(event){
     //deltas
-    let deltas={x:event.clientX-mousePos.x,y:event.clientY-mousePos.y};
-    mousePos={x:event.clientX, y:event.clientY};
-				clog('move mouse' + deltas );
+    deltas={x:event.clientX-mousePos.x,y:event.clientY-mousePos.y};
+    mousePos=[event.clientX,event.clientY];
+				clog('move');
     theFocus.parseEvent(symbol("mousemove", true, deltas ));
 }
 
@@ -138,10 +136,8 @@ document.getElementsByTagName("body")[0]
 	.addEventListener("keypress",function(event){onKey(event)});
 document.getElementsByTagName("body")[0]
 	.addEventListener("mousemove",function(event){onMouseMove(event)});
-document.getElementsByTagName("body")[0]
-	.addEventListener("mousedown",function(event){onMouseDown(event)});
-document.getElementsByTagName("body")[0]
-	.addEventListener("mouseup",function(event){onMouseUp(event)});
+document.getElementsByTagName("body")[0].
+	addEventListener("mousedown",function(event){onMouseDown(event)});
 //Right Click Capture
 document.getElementsByTagName("body")[0]
 	.addEventListener('contextmenu',function(event){event.preventDefault().alert("success!");

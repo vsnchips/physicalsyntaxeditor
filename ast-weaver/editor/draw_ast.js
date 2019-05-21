@@ -86,7 +86,6 @@ function astroot2elms(wholeAst){
 	if(!wholeAst.program){
 		clog( "not an ast root!"); return;
 	} else{
-		wholeAst.program.lev=0;
 		ast2elms(wholeAst.program, document.getElementById("program"));
 	}
 
@@ -97,15 +96,11 @@ function astroot2elms(wholeAst){
 
 
 	//This func walks an ast, constructing elements.	
-	
 	//at each node visitation, it iterated over the node's keys.
 	//a node's type is the key for the typelist. the typelist maps types to lists of their iterable keys.
 	//a seperate print map stores a map of printable types to their printable keys.
 	
 	// some node keys will point to arrays. these will be iterated.
-	//
-	//
-	
 	//It returns its DOM elements in an array.
 
 var litRepCount = 0;
@@ -128,14 +123,14 @@ function ast2elms(tree,targetElm){
 		return mElms;
 	}
 
-	makechild = function(node,childkey,container,lev=0){
+	makechild = function(node,childkey,container){
 		//Node case
 		if(node){
 		if (node.type){
 			//Make a body container div;
 			let newChild = container.appendChild(document.createElement("SPAN"));
 			newChild.style.display = childkey === "body" ? "block" : "inline";
-			newChild.style.background = childkey === "body" ? lev > -1 ? "black" : "darkslateblue"  : "magenta";
+			newChild.style.background = childkey === "body" ? container.level > 0 ? "darkslateblue" : "black"  : "magenta";
 			newChild.style.color = childkey === "body" ? "white" : "black";
 			newChild.style.borderRadius = childkey === "body" ? "15px" : "2px";
 			
@@ -146,19 +141,27 @@ function ast2elms(tree,targetElm){
 				node.type === "BigIntLiteral" 
 			){
 				//Literal Binding
-				container.myNode = node;
-				container.litIndex=litReps.length;
-				litReps.push(container);
+				//container.myNode = node;
+				//container.litIndex=litReps.length;
+				//litReps.push(container);
+				newChild.myNode = node;
+				newChild.litIndex=litReps.length;
+				litReps.push(newChild);
 
 				//Method binding
-				container.onclick = () => {theFocus.highlightElm(container);}
+				//container.onmousedown = function(event){
+				newChild.onmousedown = function(event){
+					theFocus.highlightElm(newChild);
+				//	theFocus.highlightElm(container);
+				}
 				if(node.type === "NumericLiteral" || node.type === "NumberLiteral") {
-					container.model = NumLitElementMethods;
+					//container.model = NumLitElementMethods;
+					newChild.model = NumLitElementMethods;
 				}
 
 			}
 
-			newChild.level=lev;
+			newChild.level = container.level ? container.level +1 : 1 ;
 /*recurse*/		ast2elms( node , newChild);
 			mElms.push(newChild);
 				return newChild;
@@ -170,7 +173,7 @@ function ast2elms(tree,targetElm){
 			if (ast_PrintableNodes[this.type] === childkey || (Array.isArray(ast_PrintableNodes[this.type])
 			&& ast_PrintableNodes[this.type].includes( childkey ))){
 					let elm = container.appendChild(document.createElement("SPAN"));
-					elm.innerText = node;
+					elm.innerText = node + " ";
 				return elm;
 				}
 			}
@@ -194,11 +197,11 @@ function ast2elms(tree,targetElm){
 
 			if (Array.isArray(tree[key])){ 
 			
-				tree[key].forEach( childnode => { mElms.push(makechild.bind(tree)(childnode,key,targetElm,targetElm.level+1)) });
+				tree[key].forEach( childnode => { mElms.push(makechild.bind(tree)(childnode,key,targetElm)) });
 			}
 			else
 			{
-				mElms.push(makechild.bind(tree)(tree[key],key,targetElm,targetElm.level+1));
+				mElms.push(makechild.bind(tree)(tree[key],key,targetElm));
 			}
 		});
 	}

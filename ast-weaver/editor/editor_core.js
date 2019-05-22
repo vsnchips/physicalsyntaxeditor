@@ -8,17 +8,14 @@ var socket = new WebSocket('ws://localhost:8081/');
 function updateHotLits(){
   litmsg =JSON.stringify({kind:'hot_updates',lits:lits});
   socket.send(litmsg);
-  clog("Posting lits");
-  clog(litmsg);
+//  clog("Posting lits");
+ // clog(litmsg);
 
 }
 
 function hotLitsLoop(){
   updateHotLits();
-  setTimeout( () => {
- window.requestAnimationFrame(hotLitsLoop);
-  },
-  1000.0/30.0);
+  //setTimeout( () => { window.requestAnimationFrame(hotLitsLoop);}, 1000.0/30.0);
 }
 
 
@@ -89,7 +86,8 @@ socket.onmessage = function (event) {
   if (json.kind == 'hardcode'){
 	  
 	  hardcode = json.content;
-	  clog('EVENT DATA CONTENT:' + JSON.parse(event.data).content);
+	  clog('LOADING CODE:' + JSON.parse(event.data).content);
+	  lits=[];
 	  transform_hot();
 	  write();
 

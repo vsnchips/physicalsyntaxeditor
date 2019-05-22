@@ -83,15 +83,14 @@ function blockLevelObject(node){
 
 //Layout Contract here is that divs will be constructed by whichever scope finds a reference to a body,
 function astroot2elms(wholeAst){
-	
-	litReps=[];
-	
 	if(!wholeAst.program){
 		clog( "not an ast root!"); return;
 	} else{
 		ast2elms(wholeAst.program, document.getElementById("program"));
 	}
 
+	litRepCount = 0;
+	litReps=[];
 }
 
 
@@ -104,7 +103,10 @@ function astroot2elms(wholeAst){
 	// some node keys will point to arrays. these will be iterated.
 	//It returns its DOM elements in an array.
 
+var litRepCount = 0;
 var litReps = [];  // mutates lits
+
+
 
 function ast2elms(tree,targetElm){	
 	
@@ -120,7 +122,6 @@ function ast2elms(tree,targetElm){
 		targetElm.setInnerHTML("null"); 
 		return mElms;
 	}
-
 
 	makechild = function(node,childkey,container){
 		//Node case
@@ -140,7 +141,6 @@ function ast2elms(tree,targetElm){
 				node.type === "BigIntLiteral" 
 			){
 				//Literal Binding
-				if(!node.litskip){
 				//container.myNode = node;
 				newChild.myNode = node;
 				newChild.litIndex=litReps.length;
@@ -156,9 +156,6 @@ function ast2elms(tree,targetElm){
 				if(node.type === "NumericLiteral" || node.type === "NumberLiteral") {
 					newChild.model = NumLitElementMethods;
 				}
-				}
-				} else {
-			 clog ('skipped a lit');	
 				}
 
 			}
@@ -199,16 +196,9 @@ function ast2elms(tree,targetElm){
 			}
 		type.keys.forEach( key => {
 
-			//TODO; put this somewhere better.
-			//Belatedly mark the childen for lit skipping
-			//there has to be a nicer way of doing this.
-			if (tree.litskip) tree[key].litskip=true;
-
 			if (Array.isArray(tree[key])){ 
 			
-				tree[key].forEach( childnode => { 
-					childnode.litskip = tree[key].litskip;		
-					mElms.push(makechild.bind(tree)(childnode,key,targetElm)) });
+				tree[key].forEach( childnode => { mElms.push(makechild.bind(tree)(childnode,key,targetElm)) });
 			}
 			else
 			{

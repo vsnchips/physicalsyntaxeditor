@@ -14,7 +14,8 @@ NumLitElementMethods = {
 	analogDeltas: (symbol,target) => {
 
 		console.log('dragging!');
-		NumLitElementMethods.set(target.firstChild.value+symbol.deltas.x,target.firstChild);	
+		NumLitElementMethods.set(target.firstChild.value+symbol.deltas.x,target.firstChild);
+		requestAnimationFrame(updateHotLits);
 	}
 
 }

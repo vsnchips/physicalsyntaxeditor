@@ -16,7 +16,8 @@ Broadly, the design goals are:
 
 It uses babel.js to build an abstract syntax tree with a flexible html representation.
 
-Interaction models may be bound to html elements depending on the content of the node it represents.
+
+![](Current Functionality)
 
 Quick start:
 node editor.js <target_project_directory> <working_file.js> [alternate-index.html]
@@ -205,3 +206,4 @@ There's a lot of potential in the idea of generalising a means of binding the in
 
 For instance, say I draw a box in p5.js. The code responsible for the box has arguments of its dimensions. At the same time, the lower draw calls also refer to state which informs the draw call, like the fill and the current transform.
    It would be interesting to go from clicking on the box, to manipulating the arguments of box(), or manipulating the expressions which are responsible for current state which inform the box, without the target program needing to define a new class to replace calls to box() with.
+

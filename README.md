@@ -64,9 +64,12 @@ The 'hot code' is transformed using the 'hotcode' babel plugin, which replaces a
 The focus code gets transformed into an AST, using a plugin which marks nodes to be bound to user definable interaction models.
 It is then walked by a representation builder which creates html elements, which point to their nodes and are styled according to the particular node's interaction model.
 
+# Operations
 ## Textual Operations
 The app's overall interaction paradigm is based on composable operation expressions.
 Every change to state is an operation.
+
+Currently, there are operations which modify the contents of nodes, and operations which modify the bindings of interaction models with nodes.
 
 Operations are executed in two ways:
 -Chorded gesture events (like hotkeys)
@@ -77,8 +80,11 @@ The focused object can be returned as the argument of and expression waiting on 
 
 In this way, arguments to operations can be constructed and returned to the waiting operation in an ad-hoc manner, and nodes can be navigated to and returned as arguments without having to start a new sequence of keystrokes, and focused objects can be returned as arguments to waiting operations without having to complete incomplete operations opened upon them.
 
+### The Focus
+The 'focus' is whichever node the cursor is visiting when there are no keys down, and the interface is at rest.
+
 ### Chorded gestures
-A chorded gesture event is invoked when a combination of keys are being held down. It leads to execution of the operation expressed by the keys involved in the chord.
+A chorded gesture event is invoked when a combination of keys and/or buttons are being held down. It leads to execution of the operation expressed by the keys involved in the chord.
 
 ### Operation Expression Stack
 When downward keystrokes do not complete chorded gestures, releasing the first key pushes entries to the expression stack in the form of a call to a function with incomplete arguments.
@@ -185,7 +191,14 @@ example:
 
 ## Roadmap
 
-This project
+### Immediate features to complete:
+-Single gesture summoning of modification widgets like color wheels.
+-An element to monitor the interaction stack
+
+### Desktop version:
+- There's no 'babel.types' in the standalone babel package, so, I've taken code transformation as far as it can go in a browser.
+To implement operations which construct new AST nodes, like wrapping expressions into new variable or function declarations,  I'll port it to an electron app.
+
 Ideas to extend upon:
 I intend to expand upon this idea of correspondence between observed results and their interaction models.
 There's a lot of potential in the idea of generalising a means of binding the interaction models of code responsible for a result like a rendered material with gestures initiated in the space of the observed result.

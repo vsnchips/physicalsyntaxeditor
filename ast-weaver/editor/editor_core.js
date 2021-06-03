@@ -1,6 +1,6 @@
 clog = console.log;
 
-var hardcode;
+var hotCodeAstTransforms, inEditorAstTransforms;
 
 //WebSocket Definition
 var socket = new WebSocket('ws://localhost:8081/');
@@ -28,7 +28,7 @@ var coolast;
 function transform_hot(){
   clog("transforming hardcode");
   hotast = Babel.transform(hardcode,{
-    plugins: [hotcode]
+    plugins: [hotCodeAstTransforms]
   })
 }
 
@@ -37,9 +37,10 @@ function transform_ast_representation(){
   clog("transforming hardcode");
   coolast = Babel.transform(hardcode,{
 	  ast:true,
-	  plugins: []
+	  plugins: [inEditorAstTransforms]
   })
 	//draw ast
+  console.log(coolast)
  astroot2elms(coolast.ast);
 
 }

@@ -13,13 +13,13 @@ body   {
 }
 #controls {
   font: 300 12px "Helvetica Neue";
-position: fixed;
+position: relative;
 bottom: 0;
 left:0;
   padding: 5;
   margin: 10;
   background: #f0f0f0;
-  opacity: 0.3;
+  opacity: 0.5;
   -webkit-transition: opacity 0.2s ease;
   -moz-transition: opacity 0.2s ease;
   -o-transition: opacity 0.2s ease;
@@ -38,22 +38,21 @@ color: white;
 }
 
 </style>
-
 </head>
 
 <body style="background-color: black">
-	<div id="program">hello</div>
-  <div id="controls">
+	<div id="controls">
   <button id='load'>load hard code</button>
   <button id='event_transform_hot'>transform hard code</button>
   <button id='event_transform_cool'>transform cool code</button>
   <button id='event_write_hot'>write hot code</button>
   <button id='event_write_cool'>write cool code</button>
   </div>
+  <div id="program">Click 'load hard code'</div>
+  
   <div id ='editor console'>
 	  <span id="console_head">Messages:</span>
   </div>
-
 </body>
 
 <script src="node_types.js"></script>

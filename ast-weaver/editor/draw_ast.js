@@ -17,7 +17,6 @@
 //   The FOCUS tracks its position in the statement order.
 
 var drawtree = {
-
 	programroot:null
 }
 
@@ -25,34 +24,6 @@ dtNode = function(astNode, par = null){
 	this.par=null;
 	this.myNode = astNode;
 }
-
-/*
-var drawTreePlugin = function(babel){
-
-	var t = babel.types;
-	return {
-		visitor:{
-			Identifier: { enter(){ function(path,state){
-drawtree
-			}}},
-		
-			Identifier: { enter(){ function(path,state){
-
-			}}}
-		}
-	};
-}
-*/
-
-//Maybe dont need this?
-//
-//Maybe tranform code snippets, make sub asts, and append the contents of the bodies to the current position in the current body.
-
-//
-//Editing operations:
-//Insert mode, start typing.
-//
-
 
 function focusToDiv(focus,thediv){
 	thediv=document.createElement("DIV");
@@ -67,47 +38,39 @@ function focusToDiv(focus,thediv){
 	}
 }
 
-function blockLevelObject(node){
-	newdiv = document.createElement("DIV");
-	
-
-}
-
 /*
  * It seems important to minimise representation of container nodes that do not contain mappable tokens.*/
 
 // There are two aspects of the code to monitor. The names, and the structure they sit in.
 // Some nodes include syntax, others dont. The strings within the types in the list can inform spans.
-//
 
+//Layout Contract here is that divs will be constructed by whichever scope finds a reference to a body
 
-//Layout Contract here is that divs will be constructed by whichever scope finds a reference to a body,
-function astroot2elms(wholeAst){
+function astroot2elms(wholeAst){	
+
+	/* wholeAst: a top-level babel Ast object
 	
+	This func walks an ast, constructing elements.	
+	at each node visitation, it iterated over the node's keys.
+	a node's type is the key for the typelist. the typelist maps types to lists of their iterable keys.
+	a seperate print map stores a map of printable types to their printable keys.
+	some node keys will point to arrays. these will be iterated.
+	It returns its DOM elements in an array. */
+
 	litReps=[];
-	
 	if(!wholeAst.program){
 		clog( "not an ast root!"); return;
 	} else{
 		ast2elms(wholeAst.program, document.getElementById("program"));
 	}
-
 }
-
-
-
-	//This func walks an ast, constructing elements.	
-	//at each node visitation, it iterated over the node's keys.
-	//a node's type is the key for the typelist. the typelist maps types to lists of their iterable keys.
-	//a seperate print map stores a map of printable types to their printable keys.
-	
-	// some node keys will point to arrays. these will be iterated.
-	//It returns its DOM elements in an array.
 
 var litReps = [];  // mutates lits
 
 function ast2elms(tree,targetElm){	
-	
+
+	/* This is the inner recursive func for walking the ast */
+
 	targetElm.innerHTML="";   //Clear the html here.
 	let mElms=[];	
 
@@ -121,67 +84,63 @@ function ast2elms(tree,targetElm){
 		return mElms;
 	}
 
-
 	makechild = function(node,childkey,container){
 		//Node case
-		if(node){
-		if (node.type){
+		if (node && node.type){
+
+			//TODO: put this in a proper stylesheet
+
 			//Make a body container div;
 			let newChild = container.appendChild(document.createElement("SPAN"));
 			newChild.style.display = childkey === "body" ? "block" : "inline";
-			newChild.style.background = childkey === "body" ? container.level > 0 ? "darkslateblue" : "black"  : "magenta";
+			newChild.style.background = childkey === "body" ? container.level > 0 ? "darkslateblue" : "black"  : "rgba(255,200,150,0.3)";
 			newChild.style.color = childkey === "body" ? "white" : "black";
 			newChild.style.borderRadius = childkey === "body" ? "15px" : "2px";
 			
 			// link the literal updates here.
-			if(     node.type === "StringLiteral"  ||
+			if( (node.type === "StringLiteral"  ||
 				node.type === "NumericLiteral" ||
 				node.type === "NumberLiteral" ||
-				node.type === "BigIntLiteral" 
+				node.type === "BigIntLiteral" ) && (!node.ls)
 			){
 				//Literal Binding
-				if(!node.litskip){
-				//container.myNode = node;
-				newChild.myNode = node;
-				newChild.litIndex=litReps.length;
-				litReps.push(newChild);
+					newChild.myNode = node;
+					newChild.litIndex=litReps.length;
+					litReps.push(newChild);
 
-				if(node.type != 'StringLiteral'){
-
-				//Method binding
-				newChild.onmousedown = function(event){
-					if (event.target == newChild.firstChild)
-					theFocus.highlightElm(newChild);
-				}
-				if(node.type === "NumericLiteral" || node.type === "NumberLiteral") {
-					newChild.model = NumLitElementMethods;
-				}
-				}
+					if(node.type != 'StringLiteral'){
+					
+					//Interaction Model binding
+					newChild.onmousedown = function(event){
+							if (event.target == newChild.firstChild)
+							theFocus.highlightElm(newChild);
+					}
+					if(node.type === "NumericLiteral" || node.type === "NumberLiteral") {
+							newChild.model = NumLitElementMethods;
+					}
+				
 				} else {
 			 clog ('skipped a lit');	
-				}
-
+			 clog(node.FOO)
+			}
 			}
 
 			newChild.level = container.level ? container.level +1 : 1 ;
 /*recurse*/		ast2elms( node , newChild);
-			mElms.push(newChild);
 				return newChild;
 		}
 		else
 		{	
 			//leaf case
-
 			//TODO: Resolve the extra container the leafs are being put in.
-
 			if (ast_PrintableNodes[this.type] === childkey || (Array.isArray(ast_PrintableNodes[this.type])
-			&& ast_PrintableNodes[this.type].includes( childkey ))){
+			&& ast_PrintableNodes[this.type].includes( childkey )))
+			{
 					let elm = container.appendChild(document.createElement("SPAN"));
 					elm.innerText = node + " ";
 					elm.value = node;
 					elm.litIndex=container.litIndex;
 				return elm;
-				}
 			}
 		}
 	}
@@ -197,17 +156,21 @@ function ast2elms(tree,targetElm){
 				targetElm.style.display = "block";
 				targetElm.className="codeblock";
 			}
-		type.keys.forEach( key => {
 
+			type.keys.forEach( key => {
 			//TODO; put this somewhere better.
 			//Belatedly mark the childen for lit skipping
 			//there has to be a nicer way of doing this.
-			if (tree.litskip) tree[key].litskip=true;
+			let ls = tree.ls
+			if (tree.NOINJECT ){
+				//|| tree.litskip == true ){
+				console.log("STOP INJECTING")
+				ls = tree.ls = true;
+			}
 
 			if (Array.isArray(tree[key])){ 
-			
 				tree[key].forEach( childnode => { 
-					childnode.litskip = tree[key].litskip;		
+					childnode.ls = ls;		
 					mElms.push(makechild.bind(tree)(childnode,key,targetElm)) });
 			}
 			else
@@ -229,5 +192,5 @@ function drawEdges(rootAst){
 		//These reelationships are already structured by the syntax, and therefore are visually given.
 	//the graph also looks up tokens within node fields which refer to things declared in an open buffer.
 		//
-	}
+}
 

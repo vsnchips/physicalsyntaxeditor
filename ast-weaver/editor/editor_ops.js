@@ -1,6 +1,6 @@
 
 function toSnippet(cutting){
-        let dummy=Babel.transform("",ast:true});
+        let dummy=Babel.transform("",{ast:true});
 	dummy.ast.body.push(epressionNode);
 	return Babel.transform(dummy.ast);
 }
@@ -16,6 +16,6 @@ function storeify(expressionNode,name){
 function funcify(expression,name){
 	let t=Babel.types;
         declNode=t.functionDeclaration(name,[],t.blockStatement([
-	t.returnStatement(expressionNode)],[]);
+	t.returnStatement(expressionNode)],[]));
 	return declNode;
 }
